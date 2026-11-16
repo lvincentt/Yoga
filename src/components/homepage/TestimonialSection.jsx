@@ -8,7 +8,7 @@ function Stars({ count = 5 }) {
       {Array.from({ length: count }).map((_, i) => (
         <svg
           key={i}
-          className="w-4 h-4 text-amber-400"
+          className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400"
           fill="currentColor"
           viewBox="0 0 20 20"
         >
@@ -37,7 +37,6 @@ export default function TestimonialSection() {
   const [isAutoPlay, setIsAutoPlay] = useState(true);
   const active = testimonials[activeIndex];
 
-  // Auto-play carousel
   useEffect(() => {
     if (!isAutoPlay) return;
     const timer = setInterval(() => {
@@ -56,25 +55,25 @@ export default function TestimonialSection() {
     goTo((activeIndex - 1 + testimonials.length) % testimonials.length);
 
   return (
-    <section className="relative py-32 px-6 overflow-hidden">
+    <section className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-stone-50 via-white to-stone-50" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-100/40 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-100/30 rounded-full blur-3xl" />
+      <div className="absolute top-0 left-1/4 w-48 sm:w-96 h-48 sm:h-96 bg-emerald-100/40 rounded-full blur-3xl hidden sm:block" />
+      <div className="absolute bottom-0 right-1/4 w-48 sm:w-96 h-48 sm:h-96 bg-amber-100/30 rounded-full blur-3xl hidden sm:block" />
 
       <div className="relative max-w-5xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-16">
-          <span className="inline-flex items-center gap-2 text-sm tracking-[0.2em] text-emerald-700 font-medium mb-6">
-            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+        <div className="text-center mb-8 sm:mb-12 md:mb-16">
+          <span className="inline-flex items-center gap-2 text-[10px] sm:text-xs md:text-sm tracking-[0.15em] md:tracking-[0.2em] text-emerald-700 font-medium mb-3 sm:mb-6">
+            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full animate-pulse" />
             COMMUNITY VOICES
           </span>
-          <h2 className="text-4xl md:text-5xl font-serif mb-4 text-stone-900 leading-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif mb-3 sm:mb-4 text-stone-900 leading-tight">
             Voices from Our{" "}
             <span className="text-emerald-700 relative inline-block">
               Sanctuary
               <svg
-                className="absolute -bottom-2 left-0 w-full h-3 text-emerald-300"
+                className="absolute -bottom-1 sm:-bottom-2 left-0 w-full h-2 sm:h-3 text-emerald-300"
                 viewBox="0 0 200 12"
                 preserveAspectRatio="none"
                 fill="none"
@@ -88,47 +87,47 @@ export default function TestimonialSection() {
               </svg>
             </span>
           </h2>
-          <p className="text-stone-600">
+          <p className="text-sm sm:text-base text-stone-600">
             Real stories from people who practice with us
           </p>
         </div>
 
         {/* Main testimonial card */}
-        <div className="relative mb-12">
-          {/* Decorative quote marks */}
-          <QuoteMark className="absolute -top-8 -left-4 w-20 h-20 text-emerald-200/60 rotate-180" />
-          <QuoteMark className="absolute -bottom-8 -right-4 w-20 h-20 text-emerald-200/60" />
+        <div className="relative mb-8 sm:mb-12">
+          {/* Decorative quote marks - dikecilin, quote kanan di-hide di mobile */}
+          <QuoteMark className="absolute -top-4 -left-2 sm:-top-8 sm:-left-4 w-10 h-10 sm:w-20 sm:h-20 text-emerald-200/60 rotate-180" />
+          <QuoteMark className="absolute -bottom-4 -right-2 sm:-bottom-8 sm:-right-4 w-10 h-10 sm:w-20 sm:h-20 text-emerald-200/60 hidden sm:block" />
 
-          <div className="relative bg-white/90 backdrop-blur-sm rounded-[2rem] p-8 md:p-14 shadow-xl shadow-stone-200/50 border border-stone-100">
+          <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 md:p-14 shadow-xl shadow-stone-200/50 border border-stone-100">
             {/* Rating */}
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-5 sm:mb-8">
               <Stars count={active.rating} />
-              <span className="text-xs tracking-widest text-stone-400 font-medium">
+              <span className="text-[10px] sm:text-xs tracking-widest text-stone-400 font-medium">
                 {String(activeIndex + 1).padStart(2, "0")} /{" "}
                 {String(testimonials.length).padStart(2, "0")}
               </span>
             </div>
 
-            {/* Quote — key trigger untuk animasi fade saat ganti */}
+            {/* Quote */}
             <blockquote
               key={active.id}
-              className="text-xl md:text-2xl font-serif italic text-stone-700 leading-relaxed mb-10 animate-fadeSlide"
+              className="text-base sm:text-xl md:text-2xl font-serif italic text-stone-700 leading-relaxed mb-6 sm:mb-10 animate-fadeSlide"
             >
               “{active.quote}”
             </blockquote>
 
-            {/* Author */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-              <div className="flex items-center gap-4">
-                <div className="relative">
+            {/* Author + navigation */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="relative shrink-0">
                   <img
                     src={active.avatar}
                     alt={active.name}
-                    className="w-16 h-16 rounded-full object-cover ring-2 ring-white shadow-md"
+                    className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover ring-2 ring-white shadow-md"
                   />
-                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-600 rounded-full flex items-center justify-center ring-2 ring-white">
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-emerald-600 rounded-full flex items-center justify-center ring-2 ring-white">
                     <svg
-                      className="w-3 h-3 text-white"
+                      className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -140,26 +139,28 @@ export default function TestimonialSection() {
                     </svg>
                   </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-stone-900">{active.name}</p>
-                  <p className="text-sm text-stone-500">
+                <div className="min-w-0">
+                  <p className="font-semibold text-sm sm:text-base text-stone-900 truncate">
+                    {active.name}
+                  </p>
+                  <p className="text-xs sm:text-sm text-stone-500 truncate">
                     {active.role} · {active.location}
                   </p>
-                  <p className="text-xs text-emerald-700 mt-0.5 font-medium">
+                  <p className="text-[10px] sm:text-xs text-emerald-700 mt-0.5 font-medium">
                     {active.since}
                   </p>
                 </div>
               </div>
 
               {/* Navigation arrows */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 sm:self-auto self-end">
                 <button
                   onClick={prev}
-                  className="w-11 h-11 rounded-full bg-stone-50 hover:bg-emerald-50 border border-stone-200 hover:border-emerald-300 flex items-center justify-center transition-all duration-300 group"
+                  className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-stone-50 hover:bg-emerald-50 active:bg-emerald-100 border border-stone-200 hover:border-emerald-300 flex items-center justify-center transition-all duration-300 group"
                   aria-label="Previous testimonial"
                 >
                   <svg
-                    className="w-5 h-5 text-stone-500 group-hover:text-emerald-700 transition-colors"
+                    className="w-4 h-4 sm:w-5 sm:h-5 text-stone-500 group-hover:text-emerald-700 transition-colors"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -174,11 +175,11 @@ export default function TestimonialSection() {
                 </button>
                 <button
                   onClick={next}
-                  className="w-11 h-11 rounded-full bg-emerald-700 hover:bg-emerald-800 shadow-md hover:shadow-lg hover:shadow-emerald-200 flex items-center justify-center transition-all duration-300 group"
+                  className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 shadow-md hover:shadow-lg hover:shadow-emerald-200 flex items-center justify-center transition-all duration-300 group"
                   aria-label="Next testimonial"
                 >
                   <svg
-                    className="w-5 h-5 text-white transform group-hover:translate-x-0.5 transition-transform"
+                    className="w-4 h-4 sm:w-5 sm:h-5 text-white transform group-hover:translate-x-0.5 transition-transform"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -196,15 +197,15 @@ export default function TestimonialSection() {
           </div>
         </div>
 
-        {/* Dots + mini thumbnails */}
-        <div className="flex items-center justify-center gap-2 mb-16">
+        {/* Dots */}
+        <div className="flex items-center justify-center gap-2 mb-8 sm:mb-12 md:mb-16">
           {testimonials.map((t, i) => (
             <button
               key={t.id}
               onClick={() => goTo(i)}
               className={`transition-all duration-300 rounded-full ${
                 i === activeIndex
-                  ? "w-8 h-2 bg-emerald-600"
+                  ? "w-7 sm:w-8 h-2 bg-emerald-600"
                   : "w-2 h-2 bg-stone-300 hover:bg-stone-400"
               }`}
               aria-label={`Go to testimonial ${i + 1}`}
@@ -213,27 +214,27 @@ export default function TestimonialSection() {
         </div>
 
         {/* Stats row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-12 md:mb-16">
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-stone-100"
+              className="text-center p-3 sm:p-4 md:p-6 bg-white/60 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-stone-100"
             >
-              <p className="font-serif text-3xl text-stone-900 mb-1">
+              <p className="font-serif text-2xl sm:text-3xl text-stone-900 mb-0.5 sm:mb-1">
                 {stat.value}
                 {stat.suffix && (
                   <span className="text-amber-400 ml-0.5">{stat.suffix}</span>
                 )}
               </p>
-              <p className="text-xs text-stone-500 tracking-wide">
+              <p className="text-[10px] sm:text-xs text-stone-500 tracking-wide leading-tight">
                 {stat.label}
               </p>
             </div>
           ))}
         </div>
 
-        {/* Mini testimonials — social proof berlapis */}
-        <div className="grid md:grid-cols-3 gap-4">
+        {/* Mini testimonials */}
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
           {testimonials
             .filter((_, i) => i !== activeIndex)
             .slice(0, 3)
@@ -241,19 +242,19 @@ export default function TestimonialSection() {
               <button
                 key={t.id}
                 onClick={() => goTo(testimonials.indexOf(t))}
-                className="text-left p-5 bg-white/70 backdrop-blur-sm rounded-2xl border border-stone-100 hover:border-emerald-200 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 group"
+                className="text-left p-4 sm:p-5 bg-white/70 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-stone-100 hover:border-emerald-200 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 group"
               >
                 <Stars count={t.rating} />
-                <p className="text-sm text-stone-600 leading-relaxed mt-3 line-clamp-3">
+                <p className="text-xs sm:text-sm text-stone-600 leading-relaxed mt-2 sm:mt-3 line-clamp-3">
                   "{t.quote}"
                 </p>
-                <div className="flex items-center gap-2 mt-4 pt-4 border-t border-stone-100">
+                <div className="flex items-center gap-2 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-stone-100">
                   <img
                     src={t.avatar}
                     alt={t.name}
-                    className="w-7 h-7 rounded-full object-cover"
+                    className="w-6 h-6 sm:w-7 sm:h-7 rounded-full object-cover"
                   />
-                  <span className="text-xs text-stone-500 group-hover:text-emerald-700 transition-colors">
+                  <span className="text-[11px] sm:text-xs text-stone-500 group-hover:text-emerald-700 transition-colors truncate">
                     {t.name}
                   </span>
                 </div>
