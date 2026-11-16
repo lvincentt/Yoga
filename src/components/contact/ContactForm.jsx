@@ -9,7 +9,7 @@ export default function ContactForm() {
     subject: "",
     message: "",
   });
-  const [status, setStatus] = useState("idle"); // 'idle' | 'loading' | 'success'
+  const [status, setStatus] = useState("idle");
   const [errors, setErrors] = useState({});
 
   const update = (field) => (e) =>
@@ -30,7 +30,6 @@ export default function ContactForm() {
     e.preventDefault();
     if (!validate()) return;
     setStatus("loading");
-    // Simulasi submit — ganti dengan fetch ke API
     setTimeout(() => {
       setStatus("success");
       setForm({ name: "", email: "", phone: "", subject: "", message: "" });
@@ -39,10 +38,10 @@ export default function ContactForm() {
 
   if (status === "success") {
     return (
-      <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-10 border border-emerald-200 shadow-sm text-center">
-        <div className="w-16 h-16 mx-auto bg-emerald-100 rounded-full flex items-center justify-center mb-6">
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-10 border border-emerald-200 shadow-sm text-center">
+        <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto bg-emerald-100 rounded-full flex items-center justify-center mb-4 sm:mb-6">
           <svg
-            className="w-8 h-8 text-emerald-700"
+            className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-700"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -55,10 +54,10 @@ export default function ContactForm() {
             />
           </svg>
         </div>
-        <h3 className="font-serif text-2xl text-stone-900 mb-2">
+        <h3 className="font-serif text-xl sm:text-2xl text-stone-900 mb-2">
           Message received
         </h3>
-        <p className="text-stone-600 mb-6">
+        <p className="text-sm sm:text-base text-stone-600 mb-5 sm:mb-6">
           Thank you for reaching out. We'll be in touch within 24 hours.
         </p>
         <button
@@ -72,32 +71,33 @@ export default function ContactForm() {
   }
 
   const inputClass = (field) =>
-    `w-full px-4 py-3 bg-stone-50 border rounded-xl text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-100 transition-all ${
+    `w-full px-3.5 sm:px-4 py-2.5 sm:py-3 bg-stone-50 border rounded-lg sm:rounded-xl text-sm sm:text-base text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-100 transition-all ${
       errors[field]
         ? "border-red-300 focus:border-red-400"
         : "border-stone-200 focus:border-emerald-400"
     }`;
 
+  const labelClass =
+    "block text-[10px] sm:text-xs tracking-widest text-stone-500 font-medium mb-1.5 sm:mb-2";
+
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 md:p-10 border border-stone-100 shadow-sm space-y-5"
+      className="bg-white/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-10 border border-stone-100 shadow-sm space-y-4 sm:space-y-5"
       noValidate
     >
       <div>
-        <h3 className="font-serif text-2xl text-stone-900 mb-1">
+        <h3 className="font-serif text-xl sm:text-2xl text-stone-900 mb-1">
           Send us a message
         </h3>
-        <p className="text-sm text-stone-500">
+        <p className="text-xs sm:text-sm text-stone-500 leading-relaxed">
           We'd love to hear from you. Fill in the form and we'll get back soon.
         </p>
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-4">
+      <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label className="block text-xs tracking-widest text-stone-500 font-medium mb-2">
-            NAME *
-          </label>
+          <label className={labelClass}>NAME *</label>
           <input
             type="text"
             value={form.name}
@@ -106,13 +106,13 @@ export default function ContactForm() {
             className={inputClass("name")}
           />
           {errors.name && (
-            <p className="text-xs text-red-500 mt-1">{errors.name}</p>
+            <p className="text-[10px] sm:text-xs text-red-500 mt-1">
+              {errors.name}
+            </p>
           )}
         </div>
         <div>
-          <label className="block text-xs tracking-widest text-stone-500 font-medium mb-2">
-            EMAIL *
-          </label>
+          <label className={labelClass}>EMAIL *</label>
           <input
             type="email"
             value={form.email}
@@ -121,16 +121,16 @@ export default function ContactForm() {
             className={inputClass("email")}
           />
           {errors.email && (
-            <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+            <p className="text-[10px] sm:text-xs text-red-500 mt-1">
+              {errors.email}
+            </p>
           )}
         </div>
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-4">
+      <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label className="block text-xs tracking-widest text-stone-500 font-medium mb-2">
-            PHONE
-          </label>
+          <label className={labelClass}>PHONE</label>
           <input
             type="tel"
             value={form.phone}
@@ -140,9 +140,7 @@ export default function ContactForm() {
           />
         </div>
         <div>
-          <label className="block text-xs tracking-widest text-stone-500 font-medium mb-2">
-            SUBJECT
-          </label>
+          <label className={labelClass}>SUBJECT</label>
           <select
             value={form.subject}
             onChange={update("subject")}
@@ -159,25 +157,25 @@ export default function ContactForm() {
       </div>
 
       <div>
-        <label className="block text-xs tracking-widest text-stone-500 font-medium mb-2">
-          MESSAGE *
-        </label>
+        <label className={labelClass}>MESSAGE *</label>
         <textarea
           value={form.message}
           onChange={update("message")}
-          rows={5}
+          rows={4}
           placeholder="Tell us what's on your mind..."
           className={`${inputClass("message")} resize-none`}
         />
         {errors.message && (
-          <p className="text-xs text-red-500 mt-1">{errors.message}</p>
+          <p className="text-[10px] sm:text-xs text-red-500 mt-1">
+            {errors.message}
+          </p>
         )}
       </div>
 
       <button
         type="submit"
         disabled={status === "loading"}
-        className="w-full py-4 bg-gradient-to-r from-emerald-700 to-emerald-600 text-white rounded-full font-medium shadow-lg hover:shadow-xl hover:shadow-emerald-200 transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full py-3 sm:py-4 bg-gradient-to-r from-emerald-700 to-emerald-600 text-white text-sm sm:text-base rounded-full font-medium shadow-lg hover:shadow-xl hover:shadow-emerald-200 transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {status === "loading" ? (
           <>

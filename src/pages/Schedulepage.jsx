@@ -10,7 +10,7 @@ export default function Schedule() {
   const [activeType, setActiveType] = useState("All");
   const [activeLevel, setActiveLevel] = useState("All Levels");
   const [searchQuery, setSearchQuery] = useState("");
-  const [view, setView] = useState("week"); // 'week' | 'list'
+  const [view, setView] = useState("week");
   const [selectedClass, setSelectedClass] = useState(null);
 
   const filteredIds = useMemo(() => {
@@ -39,20 +39,20 @@ export default function Schedule() {
   return (
     <div className="w-full bg-gradient-to-b from-stone-50 to-stone-100 text-stone-800 font-sans min-h-screen">
       {/* Header */}
-      <section className="relative pt-32 pb-16 px-6 overflow-hidden">
+      <section className="relative pt-20 sm:pt-24 md:pt-32 pb-10 sm:pb-14 md:pb-16 px-4 sm:px-6 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/40 via-stone-50/30 to-amber-50/20" />
-        <div className="absolute top-1/3 -left-20 w-72 h-72 bg-emerald-200/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 -right-20 w-80 h-80 bg-amber-200/15 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 -left-20 w-48 sm:w-72 h-48 sm:h-72 bg-emerald-200/20 rounded-full blur-3xl hidden sm:block" />
+        <div className="absolute bottom-0 -right-20 w-56 sm:w-80 h-56 sm:h-80 bg-amber-200/15 rounded-full blur-3xl hidden sm:block" />
 
         <div className="relative max-w-6xl mx-auto text-center">
-          <span className="inline-flex items-center gap-2 text-sm tracking-[0.2em] text-emerald-700 font-medium">
-            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+          <span className="inline-flex items-center gap-2 text-[10px] sm:text-xs md:text-sm tracking-[0.15em] md:tracking-[0.2em] text-emerald-700 font-medium">
+            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full animate-pulse" />
             WEEKLY SCHEDULE
           </span>
-          <h1 className="mt-6 text-5xl md:text-6xl font-serif leading-tight tracking-tight text-stone-900">
+          <h1 className="mt-4 sm:mt-6 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif leading-tight tracking-tight text-stone-900">
             Find Your <span className="text-emerald-700">Practice</span>
           </h1>
-          <p className="mt-6 text-stone-600 text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-4 sm:mt-6 text-sm sm:text-base md:text-lg text-stone-600 max-w-2xl mx-auto leading-relaxed">
             Browse our weekly classes and find the practice that meets you where
             you are today — whether you seek energy, stillness, or restoration.
           </p>
@@ -60,8 +60,8 @@ export default function Schedule() {
       </section>
 
       {/* Main content */}
-      <section className="pb-32 px-6">
-        <div className="max-w-6xl mx-auto space-y-8">
+      <section className="pb-16 sm:pb-24 md:pb-32 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto space-y-5 sm:space-y-6 md:space-y-8">
           <FilterBar
             activeType={activeType}
             setActiveType={setActiveType}
@@ -73,16 +73,17 @@ export default function Schedule() {
             resultCount={filteredIds.length}
           />
 
-          {/* View toggle */}
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-stone-500">
+          {/* Toolbar: result count + view toggle (desktop) */}
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs sm:text-sm text-stone-500">
               Showing{" "}
               <span className="font-medium text-stone-800">
                 {filteredIds.length}
               </span>{" "}
               of {scheduleData.length} classes
             </p>
-            <div className="inline-flex bg-white rounded-full p-1 border border-stone-200 shadow-sm">
+
+            <div className="hidden lg:inline-flex bg-white rounded-full p-1 border border-stone-200 shadow-sm">
               <button
                 onClick={() => setView("week")}
                 className={`px-4 py-2 text-sm rounded-full transition-all duration-300 flex items-center gap-2 ${
@@ -90,6 +91,7 @@ export default function Schedule() {
                     ? "bg-emerald-700 text-white shadow-sm"
                     : "text-stone-600 hover:text-stone-900"
                 }`}
+                aria-pressed={view === "week"}
               >
                 <svg
                   className="w-4 h-4"
@@ -113,6 +115,7 @@ export default function Schedule() {
                     ? "bg-emerald-700 text-white shadow-sm"
                     : "text-stone-600 hover:text-stone-900"
                 }`}
+                aria-pressed={view === "list"}
               >
                 <svg
                   className="w-4 h-4"
@@ -132,29 +135,43 @@ export default function Schedule() {
             </div>
           </div>
 
-          {/* Views */}
-          {view === "week" ? (
-            <WeekView
+          {/* === RENDER SEKALI SAJA === */}
+          {/* Mobile: selalu ListView */}
+          <div className="lg:hidden">
+            <ListView
               filteredIds={filteredIds}
               onSelectClass={setSelectedClass}
             />
-          ) : (
-            <ListView filteredIds={filteredIds} />
-          )}
+          </div>
+
+          {/* Desktop: sesuai view */}
+          <div className="hidden lg:block">
+            {view === "week" ? (
+              <WeekView
+                filteredIds={filteredIds}
+                onSelectClass={setSelectedClass}
+              />
+            ) : (
+              <ListView
+                filteredIds={filteredIds}
+                onSelectClass={setSelectedClass}
+              />
+            )}
+          </div>
 
           {/* Info banner */}
-          <div className="mt-16 bg-gradient-to-br from-emerald-900 via-emerald-800 to-stone-900 rounded-3xl p-10 md:p-12 text-center relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-64 h-64 bg-emerald-600/20 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-amber-600/10 rounded-full blur-3xl" />
+          <div className="mt-10 sm:mt-12 md:mt-16 bg-gradient-to-br from-emerald-900 via-emerald-800 to-stone-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 text-center relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-48 sm:w-64 h-48 sm:h-64 bg-emerald-600/20 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 right-0 w-48 sm:w-64 h-48 sm:h-64 bg-amber-600/10 rounded-full blur-3xl" />
             <div className="relative">
-              <h3 className="font-serif text-3xl text-white mb-3">
+              <h3 className="font-serif text-2xl sm:text-3xl text-white mb-2 sm:mb-3">
                 Not sure where to start?
               </h3>
-              <p className="text-emerald-100/80 mb-6 max-w-lg mx-auto">
+              <p className="text-sm sm:text-base text-emerald-100/80 mb-5 sm:mb-6 max-w-lg mx-auto leading-relaxed">
                 Try our Beginner-Friendly Hatha or Restorative classes — no
                 experience needed, just an open mind.
               </p>
-              <button className="px-8 py-3 bg-white text-emerald-900 rounded-full font-medium hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
+              <button className="px-5 sm:px-8 py-2.5 sm:py-3 bg-white text-emerald-900 rounded-full text-sm sm:text-base font-medium hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
                 View Beginner Classes
               </button>
             </div>

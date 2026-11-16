@@ -1,102 +1,218 @@
 // src/components/yoga/InstructorSection.jsx
+// Semua konten bisa di-override lewat props. `name` dan `credentials` opsional:
+// kalau tidak diisi, bagiannya tidak dirender (jadi tidak ada data karangan).
 
-export default function InstructorSection() {
+const DEFAULTS = {
+  eyebrow: "Lead instructor",
+  title: "Meet your",
+  titleAccent: "guide.",
+  name: "", // contoh: "Maya Putri"
+  bio: "Dengan lebih dari 8 tahun pengalaman mengajar, instruktur kami berfokus pada gerak yang berkelanjutan, alignment yang aman, dan kesadaran yang dipandu napas.",
+  quote: "Yoga is a lifelong conversation with your body — not a destination.",
+  credentials: [], // contoh: ["RYT-500", "Prenatal Yoga", "Breathwork Facilitator"]
+  years: 8,
+  bioHref: "", // contoh: "/about"
+  image: {
+    src: "https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?auto=format&fit=crop&w=1200&q=80",
+    alt: "Potret instruktur yoga utama di studio",
+  },
+};
+
+function ArrowIcon({ className = "" }) {
   return (
-    <section className="py-16 sm:py-20 md:py-28 px-4 sm:px-6 bg-white/50 relative overflow-hidden animate-fadeUp">
-      {/* Background shape - dikecilin & di-hide di mobile biar gak overflow */}
-      <div
-        className="absolute right-0 top-1/2 -translate-y-1/2 w-1/3 h-2/3
-        bg-gradient-to-b from-emerald-50/50 to-amber-50/30
-        rounded-[4rem] rotate-12 animate-gradientDrift hidden md:block"
+    <svg
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M5 12h14m0 0-5-5m5 5-5 5"
       />
+    </svg>
+  );
+}
 
-      <div className="relative max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-16 items-center">
-        {/* Image - muncul duluan di mobile */}
-        <div className="relative order-1 md:order-2 max-w-md mx-auto md:max-w-none w-full">
+export default function InstructorSection(props) {
+  const {
+    eyebrow,
+    title,
+    titleAccent,
+    name,
+    bio,
+    quote,
+    credentials,
+    years,
+    bioHref,
+    image,
+  } = {
+    ...DEFAULTS,
+    ...props,
+  };
+
+  return (
+    <section
+      aria-labelledby="instructor-heading"
+      className="relative isolate overflow-hidden bg-[#fbf9f4] px-5 py-20 sm:px-8 md:py-32"
+    >
+      <style>{`
+        @keyframes instructor-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes instructor-spin { to { transform: rotate(360deg); } }
+        @media (prefers-reduced-motion: no-preference) {
+          .instructor-float { animation: instructor-float 7s ease-in-out infinite; }
+          .instructor-spin { animation: instructor-spin 40s linear infinite; }
+          @supports (animation-timeline: view()) {
+            .instructor-reveal {
+              animation: instructor-in linear both;
+              animation-timeline: view();
+              animation-range: entry 0% entry 50%;
+            }
+            @keyframes instructor-in {
+              from { opacity: 0; transform: translateY(28px); }
+              to { opacity: 1; transform: none; }
+            }
+          }
+        }
+      `}</style>
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10"
+      >
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-stone-900/10 to-transparent" />
+        <div className="absolute -left-20 top-1/4 h-96 w-96 rounded-full bg-[radial-gradient(closest-side,rgba(163,177,138,0.22),transparent)]" />
+      </div>
+
+      <div className="mx-auto grid max-w-6xl items-center gap-14 md:grid-cols-[0.9fr_1.1fr] md:gap-20">
+        {/* ===== Gambar (di atas pada mobile, di kiri pada desktop) ===== */}
+        <div className="instructor-reveal relative mx-auto w-full max-w-sm md:max-w-none">
+          {/* Frame outline yang bergeser, memberi kedalaman tanpa blur */}
           <div
-            className="absolute -inset-3 md:-inset-6 bg-gradient-to-tr
-            from-emerald-200/30 to-amber-200/20
-            rounded-[2rem] md:rounded-[3rem] blur-2xl"
+            aria-hidden="true"
+            className="absolute inset-0 translate-x-4 translate-y-4 rounded-[2rem] border border-emerald-800/25 md:translate-x-6 md:translate-y-6"
           />
+          <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] bg-stone-200 shadow-[0_30px_80px_-30px_rgba(60,70,50,0.45)] ring-1 ring-stone-900/5">
+            <img
+              src={image.src}
+              alt={image.alt}
+              width={1200}
+              height={1500}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out hover:scale-105"
+            />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 bg-gradient-to-t from-stone-900/20 via-transparent to-transparent"
+            />
+          </div>
 
-          <img
-            src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?auto=format&fit=crop&w=1200&q=80"
-            alt="Instructor"
-            loading="lazy"
-            className="relative w-full h-72 sm:h-96 md:h-auto object-cover rounded-[1.5rem] md:rounded-[2.5rem] shadow-2xl
-            transition-transform duration-[1200ms] ease-out
-            hover:scale-[1.02] hover:-rotate-[0.5deg]"
-          />
-
-          {/* Floating quote - reposisi & dikecilin di mobile */}
-          <div
-            className="absolute -bottom-4 -left-1 sm:-bottom-6 sm:left-6 bg-white/95 backdrop-blur-sm
-            p-3 sm:p-5 md:p-6 rounded-xl md:rounded-2xl shadow-xl border border-white/20
-            max-w-[180px] sm:max-w-xs animate-floatSlow"
-          >
-            <div className="text-emerald-700 text-2xl sm:text-4xl mb-1 sm:mb-2 leading-none">
-              “
+          {/* Badge tahun pengalaman: ini fakta, bukan kutipan, jadi tidak pakai tanda kutip */}
+          <div className="instructor-float absolute -bottom-6 -right-2 flex h-28 w-28 items-center justify-center sm:-right-6 sm:h-32 sm:w-32">
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 100 100"
+              className="instructor-spin absolute inset-0 h-full w-full text-emerald-800/70"
+            >
+              <defs>
+                <path
+                  id="instructor-circle"
+                  d="M50,50 m-40,0 a40,40 0 1,1 80,0 a40,40 0 1,1 -80,0"
+                />
+              </defs>
+              <circle
+                cx="50"
+                cy="50"
+                r="49"
+                className="fill-[#f6f2ea] stroke-stone-900/10"
+                strokeWidth="0.5"
+              />
+              <text
+                className="fill-current text-[8.5px] font-medium uppercase"
+                letterSpacing="2.4"
+              >
+                <textPath href="#instructor-circle">
+                  Mindful teaching · Mindful teaching ·
+                </textPath>
+              </text>
+            </svg>
+            <div className="relative text-center leading-none">
+              <span className="block font-serif text-3xl text-stone-900 sm:text-4xl">
+                {years}+
+              </span>
+              <span className="mt-1 block text-[10px] uppercase tracking-widest text-stone-500">
+                years
+              </span>
             </div>
-            <p className="text-stone-700 italic text-xs sm:text-sm md:text-base leading-snug">
-              8 years of mindful teaching
-            </p>
           </div>
         </div>
 
-        {/* Content - muncul setelah gambar di mobile */}
-        <div className="space-y-5 sm:space-y-6 md:space-y-8 order-2 md:order-1 text-center md:text-left">
-          <div>
-            <span
-              className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-emerald-100
-              text-emerald-700 rounded-full text-xs sm:text-sm font-medium mb-3 sm:mb-4"
-            >
-              Lead Instructor
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-serif mb-3 sm:mb-6">
-              Meet Your Guide
-            </h2>
-          </div>
-
-          <p className="text-sm sm:text-base md:text-lg text-stone-600 leading-relaxed max-w-md mx-auto md:mx-0">
-            With over 8 years of teaching experience, our lead instructor
-            focuses on sustainable movement, safe alignment, and breath-led
-            awareness.
+        {/* ===== Konten ===== */}
+        <div className="instructor-reveal text-center md:text-left">
+          <p className="inline-flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-emerald-800 sm:text-xs">
+            <span aria-hidden="true" className="h-px w-8 bg-emerald-800/60" />
+            {eyebrow}
           </p>
 
-          <div className="relative pl-5 sm:pl-8 text-left max-w-md mx-auto md:mx-0">
-            <div
-              className="absolute left-0 top-0 bottom-0 w-0.5 sm:w-1
-              bg-gradient-to-b from-emerald-400 to-amber-400
-              rounded-full"
-            />
-            <p className="text-base sm:text-lg md:text-xl font-serif italic text-stone-700">
-              “Yoga is a lifelong conversation with your body — not a
-              destination.”
-            </p>
-          </div>
+          <h2
+            id="instructor-heading"
+            className="mt-5 font-serif text-4xl leading-[1.05] tracking-tight text-stone-900 sm:text-5xl"
+          >
+            {title}{" "}
+            <span className="italic text-emerald-800">{titleAccent}</span>
+          </h2>
 
-          <div className="pt-1 sm:pt-4">
-            <button
-              className="group inline-flex items-center gap-2 sm:gap-3
-              text-sm sm:text-base text-emerald-700 transition-all duration-500
-              hover:gap-4 hover:text-emerald-800"
+          {name && (
+            <p className="mt-4 font-serif text-xl text-stone-700">{name}</p>
+          )}
+
+          <p className="mx-auto mt-6 max-w-md text-base leading-relaxed text-stone-600 md:mx-0 md:text-lg">
+            {bio}
+          </p>
+
+          {credentials.length > 0 && (
+            <ul className="mx-auto mt-6 flex max-w-md flex-wrap justify-center gap-2 md:mx-0 md:justify-start">
+              {credentials.map((c) => (
+                <li
+                  key={c}
+                  className="rounded-full border border-stone-900/10 bg-white px-3.5 py-1.5 text-xs font-medium text-stone-700"
+                >
+                  {c}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {/* Pull quote: blockquote sungguhan */}
+          <figure className="relative mx-auto mt-10 max-w-md md:mx-0">
+            <span
+              aria-hidden="true"
+              className="absolute -top-5 left-0 font-serif text-6xl leading-none text-emerald-800/25"
             >
-              <span
-                className="relative after:absolute after:left-0 after:-bottom-1
-                after:h-px after:w-0 after:bg-emerald-400
-                after:transition-all after:duration-500
-                group-hover:after:w-full"
+              “
+            </span>
+            <blockquote className="border-l border-emerald-800/30 pl-6 text-left font-serif text-xl italic leading-snug text-stone-700 sm:text-2xl">
+              {quote}
+            </blockquote>
+          </figure>
+
+          {bioHref && (
+            <div className="mt-9">
+              <a
+                href={bioHref}
+                className="group inline-flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.18em] text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-800"
               >
-                Read full bio
-              </span>
-              <span
-                className="transition-transform duration-500
-                group-hover:translate-x-2"
-              >
-                ⟶
-              </span>
-            </button>
-          </div>
+                <span className="border-b border-emerald-800/30 pb-0.5 transition-colors group-hover:border-emerald-800">
+                  Read full bio
+                </span>
+                <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </section>

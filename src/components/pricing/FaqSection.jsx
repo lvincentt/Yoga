@@ -6,27 +6,29 @@ export default function FaqSection() {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
-    <div className="max-w-3xl mx-auto space-y-3">
+    <div className="max-w-3xl mx-auto space-y-2.5 sm:space-y-3">
       {faqs.map((faq, idx) => {
         const open = openIndex === idx;
         return (
           <div
             key={faq.q}
-            className="bg-white/80 backdrop-blur-sm rounded-2xl border border-stone-100 overflow-hidden transition-all duration-300"
+            className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-stone-100 overflow-hidden transition-all duration-300"
           >
             <button
               onClick={() => setOpenIndex(open ? -1 : idx)}
-              className="w-full flex items-center justify-between gap-4 p-5 text-left hover:bg-stone-50/50 transition-colors"
+              className="w-full flex items-center justify-between gap-3 sm:gap-4 p-4 sm:p-5 text-left hover:bg-stone-50/50 active:bg-stone-50 transition-colors"
               aria-expanded={open}
             >
-              <span className="font-medium text-stone-900">{faq.q}</span>
+              <span className="font-medium text-sm sm:text-base text-stone-900 leading-snug">
+                {faq.q}
+              </span>
               <span
-                className={`w-7 h-7 rounded-full bg-stone-100 flex items-center justify-center shrink-0 transition-transform duration-300 ${
+                className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-stone-100 flex items-center justify-center shrink-0 transition-transform duration-300 ${
                   open ? "rotate-45 bg-emerald-100" : ""
                 }`}
               >
                 <svg
-                  className={`w-4 h-4 transition-colors ${
+                  className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors ${
                     open ? "text-emerald-700" : "text-stone-500"
                   }`}
                   fill="none"
@@ -47,7 +49,7 @@ export default function FaqSection() {
                 open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
               }`}
             >
-              <p className="px-5 pb-5 text-stone-600 leading-relaxed text-sm">
+              <p className="px-4 sm:px-5 pb-4 sm:pb-5 text-stone-600 leading-relaxed text-xs sm:text-sm">
                 {faq.a}
               </p>
             </div>

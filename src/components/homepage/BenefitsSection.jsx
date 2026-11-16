@@ -1,45 +1,130 @@
 // src/components/yoga/BenefitsSection.jsx
+// Kompatibel dengan data lama: { title, desc, icon, color }.
+// Field opsional baru: href (tujuan "Learn more"). Kalau tidak ada, link tidak ditampilkan.
 import { benefits } from "./yogaData";
 
-export default function BenefitsSection() {
+export default function BenefitsSection({
+  eyebrow = "Why practice with us",
+  title = "A practice that",
+  titleAccent = "nurtures.",
+  description = "Pendekatan kami memadukan kebijaksanaan tradisional dengan pemahaman modern tentang gerak dan kesadaran diri.",
+  items = benefits,
+}) {
   return (
-    <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-16 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl font-serif mb-4 sm:mb-6 text-stone-900">
-            A Practice That <span className="text-emerald-700">Nurtures</span>
+    <section
+      aria-labelledby="benefits-heading"
+      className="relative isolate overflow-hidden bg-[#fbf9f4] px-5 py-20 sm:px-8 md:py-32"
+    >
+      {/* Scroll-reveal: progressive enhancement, aman untuk browser yang belum support */}
+      <style>{`
+        @media (prefers-reduced-motion: no-preference) {
+          @supports (animation-timeline: view()) {
+            .benefit-reveal {
+              animation: benefit-in linear both;
+              animation-timeline: view();
+              animation-range: entry 0% entry 45%;
+            }
+            @keyframes benefit-in {
+              from { opacity: 0; transform: translateY(28px); }
+              to { opacity: 1; transform: none; }
+            }
+          }
+        }
+      `}</style>
+
+      {/* Latar halus */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10"
+      >
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-stone-900/10 to-transparent" />
+        <div className="absolute -left-24 top-1/3 h-80 w-80 rounded-full bg-[radial-gradient(closest-side,rgba(163,177,138,0.22),transparent)]" />
+      </div>
+
+      <div className="mx-auto max-w-6xl">
+        {/* Header */}
+        <div className="mx-auto mb-12 max-w-2xl text-center sm:mb-16 md:mb-20">
+          <p className="inline-flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-emerald-800 sm:text-xs">
+            <span aria-hidden="true" className="h-px w-8 bg-emerald-800/60" />
+            {eyebrow}
+            <span aria-hidden="true" className="h-px w-8 bg-emerald-800/60" />
+          </p>
+          <h2
+            id="benefits-heading"
+            className="mt-5 font-serif text-4xl leading-[1.08] tracking-tight text-stone-900 sm:text-5xl"
+          >
+            {title}{" "}
+            <span className="italic text-emerald-800">{titleAccent}</span>
           </h2>
-          <p className="text-stone-600 text-base sm:text-lg leading-relaxed">
-            Our approach blends traditional wisdom with modern understanding of
-            movement and mindfulness.
+          <p className="mt-5 text-base leading-relaxed text-stone-600 sm:text-lg">
+            {description}
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-          {benefits.map((item) => (
-            <div key={item.title} className="group relative">
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${item.color} rounded-2xl md:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
-              />
-              <div className="relative p-5 sm:p-6 md:p-8 rounded-2xl md:rounded-3xl bg-white/80 backdrop-blur-sm border border-stone-100 group-hover:border-emerald-200 transition-all duration-300 group-hover:shadow-xl hover:-translate-y-2 h-full flex flex-col">
-                <div className="text-2xl sm:text-3xl mb-3 sm:mb-6 transform group-hover:scale-110 transition-transform duration-300">
-                  {item.icon}
+        {/* Cards */}
+        <ul className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 md:gap-7">
+          {items.map((item, i) => (
+            <li key={item.title} className="benefit-reveal group relative flex">
+              <article className="relative flex w-full flex-col overflow-hidden rounded-[1.75rem] border border-stone-900/[0.07] bg-white p-6 shadow-sm shadow-stone-900/[0.03] transition duration-500 hover:-translate-y-1.5 hover:border-emerald-800/20 hover:shadow-2xl hover:shadow-emerald-900/10 sm:p-7 md:p-8">
+                {/* Tint saat hover (pakai gradient lama kalau ada) */}
+                <div
+                  aria-hidden="true"
+                  className={`absolute inset-0 -z-0 bg-gradient-to-br opacity-0 transition-opacity duration-500 group-hover:opacity-100 ${
+                    item.color || "from-emerald-50 to-amber-50/60"
+                  }`}
+                />
+
+                <div className="relative flex h-full flex-col">
+                  <div className="flex items-start justify-between">
+                    {/* Icon dalam bentuk arch, senada dengan hero */}
+                    <span
+                      aria-hidden="true"
+                      className="flex h-14 w-12 items-center justify-center rounded-t-full rounded-b-xl bg-[#f1ece0] text-2xl ring-1 ring-stone-900/5 transition duration-500 group-hover:scale-105 group-hover:bg-white"
+                    >
+                      {item.icon}
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className="font-serif text-sm tabular-nums text-stone-400"
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-7 font-serif text-2xl leading-snug text-stone-900">
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 flex-1 text-[15px] leading-relaxed text-stone-600">
+                    {item.desc}
+                  </p>
+
+                  {item.href && (
+                    <a
+                      href={item.href}
+                      className="mt-7 inline-flex items-center gap-2 border-t border-stone-900/10 pt-5 text-xs font-medium uppercase tracking-[0.18em] text-emerald-800 outline-none after:absolute after:inset-0 after:content-[''] focus-visible:underline focus-visible:underline-offset-4"
+                    >
+                      Learn more
+                      <svg
+                        aria-hidden="true"
+                        className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={1.75}
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 12h14m0 0-5-5m5 5-5 5"
+                        />
+                      </svg>
+                    </a>
+                  )}
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-4 text-stone-900">
-                  {item.title}
-                </h3>
-                <p className="text-sm sm:text-base text-stone-600 leading-relaxed flex-1">
-                  {item.desc}
-                </p>
-                <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-stone-100">
-                  <span className="text-[10px] sm:text-xs text-emerald-700 font-medium tracking-widest">
-                    LEARN MORE →
-                  </span>
-                </div>
-              </div>
-            </div>
+              </article>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   );

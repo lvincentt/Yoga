@@ -1,14 +1,27 @@
 // src/components/yoga/TestimonialSection.jsx
-import { useState, useEffect } from "react";
-import { testimonials, stats } from "./yogaData";
+// Kompatibel dengan data lama:
+// testimonials: { id, quote, name, role, location, since, rating, avatar }
+// stats: { value, suffix, label }
+import { useEffect, useState } from "react";
+import {
+  testimonials as defaultTestimonials,
+  stats as defaultStats,
+} from "./yogaData";
+
+const AUTOPLAY_MS = 6500;
 
 function Stars({ count = 5 }) {
   return (
-    <div className="flex items-center gap-0.5">
+    <div
+      role="img"
+      aria-label={`Rated ${count} out of 5`}
+      className="flex items-center gap-0.5 text-amber-500"
+    >
       {Array.from({ length: count }).map((_, i) => (
         <svg
           key={i}
-          className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400"
+          aria-hidden="true"
+          className="h-4 w-4"
           fill="currentColor"
           viewBox="0 0 20 20"
         >
@@ -19,248 +32,289 @@ function Stars({ count = 5 }) {
   );
 }
 
-function QuoteMark({ className = "" }) {
+function ChevronIcon({ dir = "right", className = "" }) {
   return (
     <svg
-      className={className}
-      fill="currentColor"
-      viewBox="0 0 32 32"
       aria-hidden="true"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      viewBox="0 0 24 24"
     >
-      <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d={dir === "right" ? "M9 5l7 7-7 7" : "M15 19l-7-7 7-7"}
+      />
     </svg>
   );
 }
 
-export default function TestimonialSection() {
+export default function TestimonialSection({
+  eyebrow = "Community voices",
+  title = "Voices from our",
+  titleAccent = "sanctuary.",
+  description = "Cerita nyata dari orang-orang yang berlatih bersama kami.",
+  testimonials = defaultTestimonials,
+  stats = defaultStats,
+}) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isAutoPlay, setIsAutoPlay] = useState(true);
+  const [userStopped, setUserStopped] = useState(false); // berhenti permanen setelah user berinteraksi
+  const [hovering, setHovering] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  const total = testimonials.length;
   const active = testimonials[activeIndex];
+  const autoplay = !userStopped && !hovering && !reducedMotion && total > 1;
 
+  // Hormati prefers-reduced-motion: tidak ada autoplay sama sekali
   useEffect(() => {
-    if (!isAutoPlay) return;
-    const timer = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % testimonials.length);
-    }, 6000);
-    return () => clearInterval(timer);
-  }, [isAutoPlay]);
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
-  const goTo = (index) => {
-    setActiveIndex(index);
-    setIsAutoPlay(false);
+  // Autoplay: pause saat hover/focus, restart bersih saat state berubah
+  useEffect(() => {
+    if (!autoplay) return;
+    const t = setTimeout(
+      () => setActiveIndex((i) => (i + 1) % total),
+      AUTOPLAY_MS,
+    );
+    return () => clearTimeout(t);
+  }, [autoplay, activeIndex, total]);
+
+  const goTo = (i) => {
+    setActiveIndex((i + total) % total);
+    setUserStopped(true);
   };
 
-  const next = () => goTo((activeIndex + 1) % testimonials.length);
-  const prev = () =>
-    goTo((activeIndex - 1 + testimonials.length) % testimonials.length);
+  const onKeyDown = (e) => {
+    if (e.key === "ArrowRight") goTo(activeIndex + 1);
+    if (e.key === "ArrowLeft") goTo(activeIndex - 1);
+  };
+
+  if (!active) return null;
+
+  const others = testimonials.filter((_, i) => i !== activeIndex).slice(0, 3);
 
   return (
-    <section className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-stone-50 via-white to-stone-50" />
-      <div className="absolute top-0 left-1/4 w-48 sm:w-96 h-48 sm:h-96 bg-emerald-100/40 rounded-full blur-3xl hidden sm:block" />
-      <div className="absolute bottom-0 right-1/4 w-48 sm:w-96 h-48 sm:h-96 bg-amber-100/30 rounded-full blur-3xl hidden sm:block" />
+    <section
+      aria-labelledby="testimonial-heading"
+      className="relative isolate overflow-hidden bg-[#f6f2ea] px-5 py-20 sm:px-8 md:py-32"
+    >
+      <style>{`
+        @keyframes testi-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+        @media (prefers-reduced-motion: no-preference) {
+          .testi-in { animation: testi-in .7s cubic-bezier(.22,1,.36,1) both; }
+        }
+      `}</style>
 
-      <div className="relative max-w-5xl mx-auto">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10"
+      >
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-stone-900/10 to-transparent" />
+        <div className="absolute left-1/2 top-0 h-[28rem] w-[44rem] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(163,177,138,0.22),transparent)]" />
+      </div>
+
+      <div className="mx-auto max-w-5xl">
         {/* Header */}
-        <div className="text-center mb-8 sm:mb-12 md:mb-16">
-          <span className="inline-flex items-center gap-2 text-[10px] sm:text-xs md:text-sm tracking-[0.15em] md:tracking-[0.2em] text-emerald-700 font-medium mb-3 sm:mb-6">
-            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full animate-pulse" />
-            COMMUNITY VOICES
-          </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif mb-3 sm:mb-4 text-stone-900 leading-tight">
-            Voices from Our{" "}
-            <span className="text-emerald-700 relative inline-block">
-              Sanctuary
-              <svg
-                className="absolute -bottom-1 sm:-bottom-2 left-0 w-full h-2 sm:h-3 text-emerald-300"
-                viewBox="0 0 200 12"
-                preserveAspectRatio="none"
-                fill="none"
-              >
-                <path
-                  d="M2 8 Q 50 2, 100 6 T 198 5"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
+        <div className="mx-auto mb-12 max-w-2xl text-center md:mb-16">
+          <p className="inline-flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-emerald-800 sm:text-xs">
+            <span aria-hidden="true" className="h-px w-8 bg-emerald-800/60" />
+            {eyebrow}
+            <span aria-hidden="true" className="h-px w-8 bg-emerald-800/60" />
+          </p>
+          <h2
+            id="testimonial-heading"
+            className="mt-5 font-serif text-4xl leading-[1.08] tracking-tight text-stone-900 sm:text-5xl"
+          >
+            {title}{" "}
+            <span className="italic text-emerald-800">{titleAccent}</span>
           </h2>
-          <p className="text-sm sm:text-base text-stone-600">
-            Real stories from people who practice with us
+          <p className="mt-5 text-base text-stone-600 sm:text-lg">
+            {description}
           </p>
         </div>
 
-        {/* Main testimonial card */}
-        <div className="relative mb-8 sm:mb-12">
-          {/* Decorative quote marks - dikecilin, quote kanan di-hide di mobile */}
-          <QuoteMark className="absolute -top-4 -left-2 sm:-top-8 sm:-left-4 w-10 h-10 sm:w-20 sm:h-20 text-emerald-200/60 rotate-180" />
-          <QuoteMark className="absolute -bottom-4 -right-2 sm:-bottom-8 sm:-right-4 w-10 h-10 sm:w-20 sm:h-20 text-emerald-200/60 hidden sm:block" />
+        {/* Carousel utama */}
+        <div
+          role="group"
+          aria-roledescription="carousel"
+          aria-label="Testimonials"
+          tabIndex={0}
+          onKeyDown={onKeyDown}
+          onMouseEnter={() => setHovering(true)}
+          onMouseLeave={() => setHovering(false)}
+          onFocus={() => setHovering(true)}
+          onBlur={() => setHovering(false)}
+          className="relative rounded-[2rem] border border-stone-900/[0.07] bg-white p-6 shadow-[0_30px_80px_-40px_rgba(60,70,50,0.35)] outline-none focus-visible:ring-2 focus-visible:ring-emerald-800 sm:p-10 md:p-14"
+        >
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute left-6 top-2 font-serif text-8xl leading-none text-emerald-800/15 sm:left-10 sm:text-9xl"
+          >
+            “
+          </span>
 
-          <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 md:p-14 shadow-xl shadow-stone-200/50 border border-stone-100">
-            {/* Rating */}
-            <div className="flex items-center justify-between mb-5 sm:mb-8">
-              <Stars count={active.rating} />
-              <span className="text-[10px] sm:text-xs tracking-widest text-stone-400 font-medium">
-                {String(activeIndex + 1).padStart(2, "0")} /{" "}
-                {String(testimonials.length).padStart(2, "0")}
-              </span>
-            </div>
-
-            {/* Quote */}
-            <blockquote
-              key={active.id}
-              className="text-base sm:text-xl md:text-2xl font-serif italic text-stone-700 leading-relaxed mb-6 sm:mb-10 animate-fadeSlide"
+          <div className="relative flex items-center justify-between">
+            <Stars count={active.rating} />
+            <span
+              aria-hidden="true"
+              className="font-serif text-sm tabular-nums tracking-widest text-stone-400"
             >
-              “{active.quote}”
-            </blockquote>
+              {String(activeIndex + 1).padStart(2, "0")} /{" "}
+              {String(total).padStart(2, "0")}
+            </span>
+          </div>
 
-            {/* Author + navigation */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div className="relative shrink-0">
-                  <img
-                    src={active.avatar}
-                    alt={active.name}
-                    className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover ring-2 ring-white shadow-md"
-                  />
-                  <div className="absolute -bottom-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-emerald-600 rounded-full flex items-center justify-center ring-2 ring-white">
-                    <svg
-                      className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <div className="min-w-0">
-                  <p className="font-semibold text-sm sm:text-base text-stone-900 truncate">
+          <div
+            // aria-live "polite" hanya saat user yang mengganti slide, bukan saat autoplay
+            aria-live={autoplay ? "off" : "polite"}
+            aria-atomic="true"
+            role="group"
+            aria-roledescription="slide"
+            aria-label={`${activeIndex + 1} of ${total}`}
+            key={active.id}
+            className="testi-in"
+          >
+            <figure>
+              <blockquote className="mt-7 font-serif text-xl italic leading-relaxed text-stone-800 sm:text-2xl md:text-[1.75rem] md:leading-[1.5]">
+                {active.quote}
+              </blockquote>
+
+              <figcaption className="mt-9 flex items-center gap-4">
+                <img
+                  src={active.avatar}
+                  alt=""
+                  width={64}
+                  height={64}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-14 w-14 rounded-full object-cover ring-2 ring-white shadow-md sm:h-16 sm:w-16"
+                />
+                <div className="min-w-0 leading-tight">
+                  <p className="truncate font-semibold text-stone-900">
                     {active.name}
                   </p>
-                  <p className="text-xs sm:text-sm text-stone-500 truncate">
-                    {active.role} · {active.location}
+                  <p className="mt-1 truncate text-sm text-stone-500">
+                    {[active.role, active.location].filter(Boolean).join(" · ")}
                   </p>
-                  <p className="text-[10px] sm:text-xs text-emerald-700 mt-0.5 font-medium">
-                    {active.since}
-                  </p>
+                  {active.since && (
+                    <p className="mt-1 text-xs font-medium text-emerald-800">
+                      {active.since}
+                    </p>
+                  )}
                 </div>
-              </div>
+              </figcaption>
+            </figure>
+          </div>
 
-              {/* Navigation arrows */}
-              <div className="flex items-center gap-2 sm:self-auto self-end">
+          {/* Kontrol */}
+          <div className="relative mt-8 flex items-center justify-between border-t border-stone-900/[0.07] pt-6">
+            <div
+              className="flex items-center gap-1"
+              role="group"
+              aria-label="Choose testimonial"
+            >
+              {testimonials.map((t, i) => (
                 <button
-                  onClick={prev}
-                  className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-stone-50 hover:bg-emerald-50 active:bg-emerald-100 border border-stone-200 hover:border-emerald-300 flex items-center justify-center transition-all duration-300 group"
-                  aria-label="Previous testimonial"
+                  key={t.id}
+                  type="button"
+                  onClick={() => goTo(i)}
+                  aria-label={`Show testimonial ${i + 1}`}
+                  aria-current={i === activeIndex}
+                  // Area sentuh 24px, titik visual tetap kecil
+                  className="group flex h-6 items-center px-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
                 >
-                  <svg
-                    className="w-4 h-4 sm:w-5 sm:h-5 text-stone-500 group-hover:text-emerald-700 transition-colors"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
+                  <span
+                    className={`block h-2 rounded-full transition-all duration-300 ${
+                      i === activeIndex
+                        ? "w-8 bg-emerald-800"
+                        : "w-2 bg-stone-300 group-hover:bg-stone-400"
+                    }`}
+                  />
                 </button>
-                <button
-                  onClick={next}
-                  className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 shadow-md hover:shadow-lg hover:shadow-emerald-200 flex items-center justify-center transition-all duration-300 group"
-                  aria-label="Next testimonial"
-                >
-                  <svg
-                    className="w-4 h-4 sm:w-5 sm:h-5 text-white transform group-hover:translate-x-0.5 transition-transform"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </button>
-              </div>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => goTo(activeIndex - 1)}
+                aria-label="Previous testimonial"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-stone-900/15 text-stone-600 transition duration-300 hover:border-emerald-800/40 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+              >
+                <ChevronIcon dir="left" className="h-5 w-5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => goTo(activeIndex + 1)}
+                aria-label="Next testimonial"
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-800 text-white shadow-md shadow-emerald-900/15 transition duration-300 hover:-translate-y-0.5 hover:bg-emerald-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+              >
+                <ChevronIcon dir="right" className="h-5 w-5" />
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Dots */}
-        <div className="flex items-center justify-center gap-2 mb-8 sm:mb-12 md:mb-16">
-          {testimonials.map((t, i) => (
-            <button
-              key={t.id}
-              onClick={() => goTo(i)}
-              className={`transition-all duration-300 rounded-full ${
-                i === activeIndex
-                  ? "w-7 sm:w-8 h-2 bg-emerald-600"
-                  : "w-2 h-2 bg-stone-300 hover:bg-stone-400"
-              }`}
-              aria-label={`Go to testimonial ${i + 1}`}
-            />
-          ))}
-        </div>
-
-        {/* Stats row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-12 md:mb-16">
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="text-center p-3 sm:p-4 md:p-6 bg-white/60 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-stone-100"
-            >
-              <p className="font-serif text-2xl sm:text-3xl text-stone-900 mb-0.5 sm:mb-1">
-                {stat.value}
-                {stat.suffix && (
-                  <span className="text-amber-400 ml-0.5">{stat.suffix}</span>
-                )}
-              </p>
-              <p className="text-[10px] sm:text-xs text-stone-500 tracking-wide leading-tight">
-                {stat.label}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        {/* Mini testimonials */}
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-          {testimonials
-            .filter((_, i) => i !== activeIndex)
-            .slice(0, 3)
-            .map((t) => (
-              <button
-                key={t.id}
-                onClick={() => goTo(testimonials.indexOf(t))}
-                className="text-left p-4 sm:p-5 bg-white/70 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-stone-100 hover:border-emerald-200 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 group"
-              >
-                <Stars count={t.rating} />
-                <p className="text-xs sm:text-sm text-stone-600 leading-relaxed mt-2 sm:mt-3 line-clamp-3">
-                  "{t.quote}"
-                </p>
-                <div className="flex items-center gap-2 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-stone-100">
-                  <img
-                    src={t.avatar}
-                    alt={t.name}
-                    className="w-6 h-6 sm:w-7 sm:h-7 rounded-full object-cover"
-                  />
-                  <span className="text-[11px] sm:text-xs text-stone-500 group-hover:text-emerald-700 transition-colors truncate">
-                    {t.name}
-                  </span>
-                </div>
-              </button>
+        {/* Stats: dl dengan pemisah tipis, bukan kartu-kartu */}
+        {stats?.length > 0 && (
+          <dl className="mt-14 grid grid-cols-2 gap-y-8 md:mt-20 md:grid-cols-4 md:divide-x md:divide-stone-900/10">
+            {stats.map((s) => (
+              <div key={s.label} className="px-4 text-center">
+                <dd className="font-serif text-4xl text-stone-900 sm:text-5xl">
+                  {s.value}
+                  {s.suffix && (
+                    <span className="ml-0.5 text-emerald-800">{s.suffix}</span>
+                  )}
+                </dd>
+                <dt className="mt-2 text-xs uppercase tracking-[0.16em] text-stone-500">
+                  {s.label}
+                </dt>
+              </div>
             ))}
-        </div>
+          </dl>
+        )}
+
+        {/* Testimonial lain */}
+        {others.length > 0 && (
+          <ul className="mt-14 grid gap-4 sm:grid-cols-2 md:mt-20 md:grid-cols-3">
+            {others.map((t) => (
+              <li key={t.id} className="flex">
+                <button
+                  type="button"
+                  onClick={() => goTo(testimonials.indexOf(t))}
+                  className="group flex w-full flex-col rounded-2xl border border-stone-900/[0.07] bg-white/70 p-5 text-left transition duration-300 hover:-translate-y-1 hover:border-emerald-800/20 hover:bg-white hover:shadow-xl hover:shadow-emerald-900/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+                >
+                  <Stars count={t.rating} />
+                  <p className="mt-3 line-clamp-3 flex-1 text-sm leading-relaxed text-stone-600">
+                    “{t.quote}”
+                  </p>
+                  <span className="mt-4 flex items-center gap-2.5 border-t border-stone-900/[0.07] pt-4">
+                    <img
+                      src={t.avatar}
+                      alt=""
+                      width={28}
+                      height={28}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-7 w-7 rounded-full object-cover"
+                    />
+                    <span className="truncate text-xs text-stone-500 transition-colors group-hover:text-emerald-800">
+                      {t.name}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </section>
   );

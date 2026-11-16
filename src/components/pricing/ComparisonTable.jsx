@@ -4,7 +4,7 @@ import { comparisonFeatures, formatPrice, plans } from "./pricingData";
 function Check() {
   return (
     <svg
-      className="w-5 h-5 text-emerald-600 mx-auto"
+      className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 mx-auto"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
@@ -22,7 +22,7 @@ function Check() {
 function Cross() {
   return (
     <svg
-      className="w-5 h-5 text-stone-300 mx-auto"
+      className="w-4 h-4 sm:w-5 sm:h-5 text-stone-300 mx-auto"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
@@ -46,52 +46,61 @@ export default function ComparisonTable() {
   ];
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[720px] border-separate border-spacing-0">
-        <thead>
-          <tr>
-            <th className="text-left p-5 bg-stone-50 rounded-tl-2xl text-sm font-medium text-stone-500 sticky left-0 z-10">
-              Features
-            </th>
-            {columns.map(({ key, plan }, i) => (
-              <th
-                key={key}
-                className={`p-5 text-center bg-stone-50 ${
-                  i === columns.length - 1 ? "rounded-tr-2xl" : ""
-                }`}
-              >
-                <p className="font-serif text-lg text-stone-900">{plan.name}</p>
-                <p className="text-xs text-stone-500 mt-1">
-                  {formatPrice(plan.price)}
-                </p>
+    <div className="relative">
+      {/* Scroll hint — hanya mobile/tablet */}
+      <p className="lg:hidden text-[10px] text-stone-400 text-center py-2 bg-stone-50/80 border-b border-stone-100">
+        ← Swipe to compare all plans →
+      </p>
+
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[720px] border-separate border-spacing-0">
+          <thead>
+            <tr>
+              <th className="text-left p-3 sm:p-5 bg-stone-50 rounded-tl-2xl text-xs sm:text-sm font-medium text-stone-500 sticky left-0 z-10 min-w-[140px]">
+                Features
               </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {comparisonFeatures.map((feat, idx) => (
-            <tr key={feat.name}>
-              <td
-                className={`p-4 pl-5 text-sm text-stone-700 bg-white sticky left-0 z-10 ${
-                  idx % 2 === 0 ? "bg-white" : "bg-stone-50/50"
-                }`}
-              >
-                {feat.name}
-              </td>
-              {columns.map(({ key }) => (
-                <td
+              {columns.map(({ key, plan }, i) => (
+                <th
                   key={key}
-                  className={`p-4 text-center ${
-                    idx % 2 === 0 ? "bg-white" : "bg-stone-50/50"
+                  className={`p-3 sm:p-5 text-center bg-stone-50 ${
+                    i === columns.length - 1 ? "rounded-tr-2xl" : ""
                   }`}
                 >
-                  {feat[key] ? <Check /> : <Cross />}
-                </td>
+                  <p className="font-serif text-sm sm:text-lg text-stone-900 leading-tight">
+                    {plan.name}
+                  </p>
+                  <p className="text-[10px] sm:text-xs text-stone-500 mt-0.5 sm:mt-1 whitespace-nowrap">
+                    {formatPrice(plan.price)}
+                  </p>
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {comparisonFeatures.map((feat, idx) => (
+              <tr key={feat.name}>
+                <td
+                  className={`p-3 sm:p-4 pl-3 sm:pl-5 text-xs sm:text-sm text-stone-700 sticky left-0 z-10 ${
+                    idx % 2 === 0 ? "bg-white" : "bg-stone-50"
+                  }`}
+                >
+                  {feat.name}
+                </td>
+                {columns.map(({ key }) => (
+                  <td
+                    key={key}
+                    className={`p-3 sm:p-4 text-center ${
+                      idx % 2 === 0 ? "bg-white" : "bg-stone-50"
+                    }`}
+                  >
+                    {feat[key] ? <Check /> : <Cross />}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
