@@ -41,3 +41,25 @@
 .animate-gradientDrift {
   animation: gradientDrift 12s ease-in-out infinite;
 }
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fadeSlide {
+  animation: fadeSlide 0.5s ease-out;
+}
+
+/* Untuk line-clamp kalau belum ada */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
