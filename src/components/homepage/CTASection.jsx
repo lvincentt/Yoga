@@ -1,5 +1,5 @@
 // src/components/yoga/CTASection.jsx
-// Semua teks dan link bisa di-override lewat props.
+// All text and links can be overridden via props.
 
 const DEFAULTS = {
   eyebrow: "Begin your journey",
@@ -58,7 +58,7 @@ export default function CTASection(props) {
       `}</style>
 
       <div className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] bg-emerald-950 px-6 py-16 text-center shadow-[0_40px_100px_-40px_rgba(6,40,30,0.7)] sm:rounded-[2.5rem] sm:px-12 sm:py-20 md:py-24">
-        {/* Dekorasi: cincin konsentris + cahaya hangat, senada dengan lingkaran di hero */}
+        {/* Decoration: concentric rings + warm glow, matching the circles in the hero */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0"

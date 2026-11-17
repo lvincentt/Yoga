@@ -1,20 +1,20 @@
 // src/components/yoga/InstructorSection.jsx
-// Semua konten bisa di-override lewat props. `name` dan `credentials` opsional:
-// kalau tidak diisi, bagiannya tidak dirender (jadi tidak ada data karangan).
+// All content can be overridden via props. `name` and `credentials` are optional:
+// if not provided, that part isn't rendered (so there's no fabricated data).
 
 const DEFAULTS = {
   eyebrow: "Lead instructor",
   title: "Meet your",
   titleAccent: "guide.",
-  name: "", // contoh: "Maya Putri"
-  bio: "Dengan lebih dari 8 tahun pengalaman mengajar, instruktur kami berfokus pada gerak yang berkelanjutan, alignment yang aman, dan kesadaran yang dipandu napas.",
+  name: "", // e.g. "Maya Putri"
+  bio: "With more than 8 years of teaching experience, our instructor focuses on sustainable movement, safe alignment, and breath-guided awareness.",
   quote: "Yoga is a lifelong conversation with your body — not a destination.",
-  credentials: [], // contoh: ["RYT-500", "Prenatal Yoga", "Breathwork Facilitator"]
+  credentials: [], // e.g. ["RYT-500", "Prenatal Yoga", "Breathwork Facilitator"]
   years: 8,
-  bioHref: "", // contoh: "/about"
+  bioHref: "", // e.g. "/about"
   image: {
     src: "https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?auto=format&fit=crop&w=1200&q=80",
-    alt: "Potret instruktur yoga utama di studio",
+    alt: "Portrait of the lead yoga instructor in the studio",
   },
 };
 
@@ -88,9 +88,9 @@ export default function InstructorSection(props) {
       </div>
 
       <div className="mx-auto grid max-w-6xl items-center gap-14 md:grid-cols-[0.9fr_1.1fr] md:gap-20">
-        {/* ===== Gambar (di atas pada mobile, di kiri pada desktop) ===== */}
+        {/* ===== Image (on top on mobile, on the left on desktop) ===== */}
         <div className="instructor-reveal relative mx-auto w-full max-w-sm md:max-w-none">
-          {/* Frame outline yang bergeser, memberi kedalaman tanpa blur */}
+          {/* Offset outline frame, adds depth without blur */}
           <div
             aria-hidden="true"
             className="absolute inset-0 translate-x-4 translate-y-4 rounded-[2rem] border border-emerald-800/25 md:translate-x-6 md:translate-y-6"
@@ -111,7 +111,7 @@ export default function InstructorSection(props) {
             />
           </div>
 
-          {/* Badge tahun pengalaman: ini fakta, bukan kutipan, jadi tidak pakai tanda kutip */}
+          {/* Years-of-experience badge: this is a fact, not a quote, so no quotation marks */}
           <div className="instructor-float absolute -bottom-6 -right-2 flex h-28 w-28 items-center justify-center sm:-right-6 sm:h-32 sm:w-32">
             <svg
               aria-hidden="true"
@@ -151,7 +151,7 @@ export default function InstructorSection(props) {
           </div>
         </div>
 
-        {/* ===== Konten ===== */}
+        {/* ===== Content ===== */}
         <div className="instructor-reveal text-center md:text-left">
           <p className="inline-flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-emerald-800 sm:text-xs">
             <span aria-hidden="true" className="h-px w-8 bg-emerald-800/60" />
@@ -187,13 +187,13 @@ export default function InstructorSection(props) {
             </ul>
           )}
 
-          {/* Pull quote: blockquote sungguhan */}
+          {/* Pull quote: an actual blockquote */}
           <figure className="relative mx-auto mt-10 max-w-md md:mx-0">
             <span
               aria-hidden="true"
               className="absolute -top-5 left-0 font-serif text-6xl leading-none text-emerald-800/25"
             >
-              “
+              "
             </span>
             <blockquote className="border-l border-emerald-800/30 pl-6 text-left font-serif text-xl italic leading-snug text-stone-700 sm:text-2xl">
               {quote}

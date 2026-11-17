@@ -1,13 +1,13 @@
 // src/components/yoga/BenefitsSection.jsx
-// Kompatibel dengan data lama: { title, desc, icon, color }.
-// Field opsional baru: href (tujuan "Learn more"). Kalau tidak ada, link tidak ditampilkan.
+// Compatible with legacy data: { title, desc, icon, color }.
+// New optional field: href (target for "Learn more"). If absent, the link is not shown.
 import { benefits } from "./yogaData";
 
 export default function BenefitsSection({
   eyebrow = "Why practice with us",
   title = "A practice that",
   titleAccent = "nurtures.",
-  description = "Pendekatan kami memadukan kebijaksanaan tradisional dengan pemahaman modern tentang gerak dan kesadaran diri.",
+  description = "Our approach blends traditional wisdom with a modern understanding of movement and self-awareness.",
   items = benefits,
 }) {
   return (
@@ -15,7 +15,7 @@ export default function BenefitsSection({
       aria-labelledby="benefits-heading"
       className="relative isolate overflow-hidden bg-[#fbf9f4] px-5 py-20 sm:px-8 md:py-32"
     >
-      {/* Scroll-reveal: progressive enhancement, aman untuk browser yang belum support */}
+      {/* Scroll-reveal: progressive enhancement, safe for browsers that don't support it yet */}
       <style>{`
         @media (prefers-reduced-motion: no-preference) {
           @supports (animation-timeline: view()) {
@@ -32,7 +32,7 @@ export default function BenefitsSection({
         }
       `}</style>
 
-      {/* Latar halus */}
+      {/* Subtle background */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10"
@@ -66,7 +66,7 @@ export default function BenefitsSection({
           {items.map((item, i) => (
             <li key={item.title} className="benefit-reveal group relative flex">
               <article className="relative flex w-full flex-col overflow-hidden rounded-[1.75rem] border border-stone-900/[0.07] bg-white p-6 shadow-sm shadow-stone-900/[0.03] transition duration-500 hover:-translate-y-1.5 hover:border-emerald-800/20 hover:shadow-2xl hover:shadow-emerald-900/10 sm:p-7 md:p-8">
-                {/* Tint saat hover (pakai gradient lama kalau ada) */}
+                {/* Hover tint (uses the old gradient if present) */}
                 <div
                   aria-hidden="true"
                   className={`absolute inset-0 -z-0 bg-gradient-to-br opacity-0 transition-opacity duration-500 group-hover:opacity-100 ${
@@ -76,7 +76,7 @@ export default function BenefitsSection({
 
                 <div className="relative flex h-full flex-col">
                   <div className="flex items-start justify-between">
-                    {/* Icon dalam bentuk arch, senada dengan hero */}
+                    {/* Icon in arch shape, matching the hero */}
                     <span
                       aria-hidden="true"
                       className="flex h-14 w-12 items-center justify-center rounded-t-full rounded-b-xl bg-[#f1ece0] text-2xl ring-1 ring-stone-900/5 transition duration-500 group-hover:scale-105 group-hover:bg-white"

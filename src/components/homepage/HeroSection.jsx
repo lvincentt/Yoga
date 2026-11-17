@@ -1,24 +1,24 @@
 // src/components/yoga/HeroSection.jsx
-// Tailwind only, tanpa dependency tambahan.
+// Tailwind only, no additional dependencies.
 
 const DEFAULTS = {
   eyebrow: "Yoga · Breathwork · Stillness",
   titleTop: "Move with",
   titleAccent: "intention.",
   description:
-    "Kelas kecil di ruang yang tenang, untuk kamu yang ingin bergerak lebih pelan, bernapas lebih dalam, dan pulang dengan kepala yang lebih ringan.",
+    "Small classes in a quiet space, for those of you who want to move more slowly, breathe more deeply, and come home with a lighter head.",
   primaryCta: { label: "Begin your journey", href: "#join" },
   secondaryCta: { label: "View schedule", href: "#schedule" },
   image: {
     src: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=80",
-    alt: "Seseorang berlatih yoga di studio yang tenang dengan cahaya alami",
+    alt: "A person practicing yoga in a quiet studio with natural light",
   },
   stats: [
-    { value: "8", label: "Murid per kelas" },
-    { value: "12+", label: "Kelas tiap minggu" },
-    { value: "4.9", label: "Rating murid" },
+    { value: "8", label: "Students per class" },
+    { value: "12+", label: "Classes per week" },
+    { value: "4.9", label: "Student rating" },
   ],
-  nextClass: { title: "Vinyasa Flow", time: "Hari ini · 17:30" },
+  nextClass: { title: "Vinyasa Flow", time: "Today · 17:30" },
 };
 
 function ArrowIcon({ className = "" }) {
@@ -75,10 +75,10 @@ export default function HeroSection(props) {
   return (
     <section
       aria-labelledby="hero-heading"
-      // ✅ min-h-screen di SECTION (bukan cuma grid) + pakai dvh untuk mobile browser bar
-      className="relative isolate flex min-h-screen min-h-[100dvh] flex-col overflow-hidden bg-[#f6f2ea] text-stone-900"
+      // ✅ min-h-screen on the SECTION (not just the grid) + use dvh for mobile browser bar
+      className="relative isolate flex min-h-screen flex-col overflow-hidden bg-[#f6f2ea] text-stone-900"
     >
-      {/* Animasi: hanya jalan kalau user tidak minta reduced motion */}
+      {/* Animation: only runs if the user hasn't requested reduced motion */}
       <style>{`
         @keyframes hero-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
         @keyframes hero-fade { from { opacity: 0; } to { opacity: 1; } }
@@ -101,10 +101,10 @@ export default function HeroSection(props) {
         <div className="hero-breathe absolute -right-10 top-32 hidden h-[24rem] w-[24rem] rounded-full border border-stone-900/5 [animation-delay:-3s] md:block" />
       </div>
 
-      {/* ✅ Grid jadi flex-1 supaya mengisi sisa tinggi section */}
+      {/* ✅ Grid becomes flex-1 so it fills the remaining height of the section */}
       <div className="mx-auto flex w-full max-w-6xl flex-1 items-center px-5 sm:px-8">
         <div className="grid w-full items-center gap-12 py-24 md:grid-cols-[1.05fr_0.95fr] md:gap-16">
-          {/* ===== Gambar ===== */}
+          {/* ===== Image ===== */}
           <div className="hero-fade relative order-1 mx-auto w-full max-w-sm md:order-2 md:max-w-none">
             <div className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-t-[999px] rounded-b-[2rem] bg-stone-200 shadow-[0_30px_80px_-30px_rgba(60,70,50,0.45)] ring-1 ring-stone-900/5">
               <img
@@ -129,7 +129,7 @@ export default function HeroSection(props) {
               </span>
               <div className="leading-tight">
                 <p className="text-[11px] font-medium uppercase tracking-widest text-stone-500">
-                  Kelas berikutnya
+                  Next class
                 </p>
                 <p className="mt-0.5 text-sm font-semibold text-stone-900">
                   {nextClass.title}
@@ -139,7 +139,7 @@ export default function HeroSection(props) {
             </div>
           </div>
 
-          {/* ===== Teks ===== */}
+          {/* ===== Text ===== */}
           <div className="order-2 text-center md:order-1 md:text-left">
             <p className="hero-rise inline-flex items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.22em] text-emerald-800 sm:text-xs">
               <span aria-hidden="true" className="h-px w-8 bg-emerald-800/60" />

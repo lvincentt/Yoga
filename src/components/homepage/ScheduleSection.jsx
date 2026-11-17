@@ -1,11 +1,11 @@
 // src/components/yoga/ScheduleSection.jsx
-// Kompatibel dengan data lama:
+// Compatible with legacy data:
 // { id, name, price, time, duration, level, instructor: { name, avatar }, spots, capacity, accent, color }
-// Field opsional baru: href (link booking). Prop opsional: onBook(classItem).
+// New optional field: href (booking link). Optional prop: onBook(classItem).
 import { classes, formatPrice } from "./yogaData";
 
-// Class dibuat statis supaya Tailwind tidak membuangnya saat build
-// (versi lama memakai `group-hover:${...}` dinamis, yang tidak pernah ter-generate).
+// Classes are made static so Tailwind doesn't purge them at build time
+// (the old version used dynamic `group-hover:${...}`, which never got generated).
 const ACCENTS = {
   amber: {
     dot: "bg-amber-400",
@@ -118,7 +118,7 @@ export default function ScheduleSection({
   eyebrow = "This week",
   title = "Weekly",
   titleAccent = "classes.",
-  description = "Setiap kelas dirancang untuk energi dan niat yang berbeda. Pilih yang paling cocok dengan harimu.",
+  description = "Each class is designed for a different energy and intention. Choose the one that best suits your day.",
   items = classes,
   onBook,
 }) {
@@ -182,19 +182,19 @@ export default function ScheduleSection({
                     isFull ? "bg-white/60" : "bg-white"
                   }`}
                 >
-                  {/* Tint hover */}
+                  {/* Hover tint */}
                   <div
                     aria-hidden="true"
                     className={`pointer-events-none absolute inset-0 bg-gradient-to-r ${accent.tint} to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100`}
                   />
-                  {/* Accent bar kiri */}
+                  {/* Left accent bar */}
                   <div
                     aria-hidden="true"
                     className={`absolute inset-y-5 left-0 w-1 rounded-r-full transition-all duration-500 group-hover:w-1.5 ${accent.bar}`}
                   />
 
                   <div className="relative grid gap-5 p-5 pl-6 sm:p-6 sm:pl-8 md:grid-cols-[8.5rem_1fr_auto] md:items-center md:gap-8 md:p-7 md:pl-9">
-                    {/* Waktu */}
+                    {/* Time */}
                     <div className="flex items-baseline gap-3 md:block">
                       <p className="font-serif text-2xl leading-none text-stone-900 md:text-3xl">
                         {c.time}
@@ -240,7 +240,7 @@ export default function ScheduleSection({
                       </div>
                     </div>
 
-                    {/* Harga + CTA (satu blok, tidak lagi duplikat mobile/desktop) */}
+                    {/* Price + CTA (single block, no longer duplicated mobile/desktop) */}
                     <div className="flex items-center justify-between gap-4 border-t border-stone-900/[0.07] pt-4 md:flex-col md:items-end md:justify-center md:gap-3 md:border-l md:border-t-0 md:pl-8 md:pt-0">
                       <div className="md:text-right">
                         <p className="text-[11px] uppercase tracking-widest text-stone-400">
@@ -260,12 +260,12 @@ export default function ScheduleSection({
         </ul>
 
         <p className="mt-10 text-center text-sm text-stone-500">
-          Tidak ada jam yang cocok?{" "}
+          No time that works for you?{" "}
           <a
             href="/contact"
             className="font-medium text-emerald-800 underline underline-offset-4 hover:text-emerald-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-800"
           >
-            Tanyakan sesi privat
+            Ask about a private session
           </a>
         </p>
       </div>

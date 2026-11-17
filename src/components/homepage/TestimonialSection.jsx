@@ -1,5 +1,5 @@
 // src/components/yoga/TestimonialSection.jsx
-// Kompatibel dengan data lama:
+// Compatible with legacy data:
 // testimonials: { id, quote, name, role, location, since, rating, avatar }
 // stats: { value, suffix, label }
 import { useEffect, useState } from "react";
@@ -55,12 +55,12 @@ export default function TestimonialSection({
   eyebrow = "Community voices",
   title = "Voices from our",
   titleAccent = "sanctuary.",
-  description = "Cerita nyata dari orang-orang yang berlatih bersama kami.",
+  description = "Real stories from the people who practice with us.",
   testimonials = defaultTestimonials,
   stats = defaultStats,
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [userStopped, setUserStopped] = useState(false); // berhenti permanen setelah user berinteraksi
+  const [userStopped, setUserStopped] = useState(false); // stops permanently after the user interacts
   const [hovering, setHovering] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -68,7 +68,7 @@ export default function TestimonialSection({
   const active = testimonials[activeIndex];
   const autoplay = !userStopped && !hovering && !reducedMotion && total > 1;
 
-  // Hormati prefers-reduced-motion: tidak ada autoplay sama sekali
+  // Respect prefers-reduced-motion: no autoplay at all
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => setReducedMotion(mq.matches);
@@ -77,7 +77,7 @@ export default function TestimonialSection({
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  // Autoplay: pause saat hover/focus, restart bersih saat state berubah
+  // Autoplay: pause on hover/focus, restart cleanly when state changes
   useEffect(() => {
     if (!autoplay) return;
     const t = setTimeout(
@@ -141,7 +141,7 @@ export default function TestimonialSection({
           </p>
         </div>
 
-        {/* Carousel utama */}
+        {/* Main carousel */}
         <div
           role="group"
           aria-roledescription="carousel"
@@ -158,7 +158,7 @@ export default function TestimonialSection({
             aria-hidden="true"
             className="pointer-events-none absolute left-6 top-2 font-serif text-8xl leading-none text-emerald-800/15 sm:left-10 sm:text-9xl"
           >
-            “
+            "
           </span>
 
           <div className="relative flex items-center justify-between">
@@ -173,7 +173,7 @@ export default function TestimonialSection({
           </div>
 
           <div
-            // aria-live "polite" hanya saat user yang mengganti slide, bukan saat autoplay
+            // aria-live "polite" only when the user changes the slide, not during autoplay
             aria-live={autoplay ? "off" : "polite"}
             aria-atomic="true"
             role="group"
@@ -214,7 +214,7 @@ export default function TestimonialSection({
             </figure>
           </div>
 
-          {/* Kontrol */}
+          {/* Controls */}
           <div className="relative mt-8 flex items-center justify-between border-t border-stone-900/[0.07] pt-6">
             <div
               className="flex items-center gap-1"
@@ -228,7 +228,7 @@ export default function TestimonialSection({
                   onClick={() => goTo(i)}
                   aria-label={`Show testimonial ${i + 1}`}
                   aria-current={i === activeIndex}
-                  // Area sentuh 24px, titik visual tetap kecil
+                  // 24px touch target, visual dot stays small
                   className="group flex h-6 items-center px-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
                 >
                   <span
@@ -263,7 +263,7 @@ export default function TestimonialSection({
           </div>
         </div>
 
-        {/* Stats: dl dengan pemisah tipis, bukan kartu-kartu */}
+        {/* Stats: a dl with thin dividers, not cards */}
         {stats?.length > 0 && (
           <dl className="mt-14 grid grid-cols-2 gap-y-8 md:mt-20 md:grid-cols-4 md:divide-x md:divide-stone-900/10">
             {stats.map((s) => (
@@ -282,7 +282,7 @@ export default function TestimonialSection({
           </dl>
         )}
 
-        {/* Testimonial lain */}
+        {/* Other testimonials */}
         {others.length > 0 && (
           <ul className="mt-14 grid gap-4 sm:grid-cols-2 md:mt-20 md:grid-cols-3">
             {others.map((t) => (
@@ -294,7 +294,7 @@ export default function TestimonialSection({
                 >
                   <Stars count={t.rating} />
                   <p className="mt-3 line-clamp-3 flex-1 text-sm leading-relaxed text-stone-600">
-                    “{t.quote}”
+                    "{t.quote}"
                   </p>
                   <span className="mt-4 flex items-center gap-2.5 border-t border-stone-900/[0.07] pt-4">
                     <img
