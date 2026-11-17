@@ -112,11 +112,11 @@ export default function InstructorSection(props) {
           </div>
 
           {/* Years-of-experience badge: this is a fact, not a quote, so no quotation marks */}
-          <div className="instructor-float absolute -bottom-6 -right-2 flex h-28 w-28 items-center justify-center sm:-right-6 sm:h-32 sm:w-32">
+          <div className="absolute -bottom-6 -right-2 flex h-28 w-28 items-center justify-center sm:-right-6 sm:h-32 sm:w-32">
             <svg
               aria-hidden="true"
               viewBox="0 0 100 100"
-              className="instructor-spin absolute inset-0 h-full w-full text-emerald-800/70"
+              className="absolute inset-0 h-full w-full text-emerald-800/70"
             >
               <defs>
                 <path
