@@ -60,7 +60,7 @@ export default function TestimonialSection({
   stats = defaultStats,
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [userStopped, setUserStopped] = useState(false); // stops permanently after the user interacts
+  const [userStopped, setUserStopped] = useState(false);
   const [hovering, setHovering] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -68,7 +68,6 @@ export default function TestimonialSection({
   const active = testimonials[activeIndex];
   const autoplay = !userStopped && !hovering && !reducedMotion && total > 1;
 
-  // Respect prefers-reduced-motion: no autoplay at all
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => setReducedMotion(mq.matches);
@@ -77,7 +76,6 @@ export default function TestimonialSection({
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  // Autoplay: pause on hover/focus, restart cleanly when state changes
   useEffect(() => {
     if (!autoplay) return;
     const t = setTimeout(
@@ -107,9 +105,54 @@ export default function TestimonialSection({
       className="relative isolate overflow-hidden bg-[#f6f2ea] px-5 py-20 sm:px-8 md:py-32"
     >
       <style>{`
+        /* Slide transition when switching testimonials */
         @keyframes testi-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
         @media (prefers-reduced-motion: no-preference) {
           .testi-in { animation: testi-in .7s cubic-bezier(.22,1,.36,1) both; }
+        }
+
+        /* Scroll-driven reveals for this section */
+        @media (prefers-reduced-motion: no-preference) {
+          @supports (animation-timeline: view()) {
+            @keyframes section-in {
+              from { opacity: 0; transform: translateY(24px); }
+              to   { opacity: 1; transform: none; }
+            }
+
+            .testi-header-reveal {
+              animation: section-in linear both;
+              animation-timeline: view();
+              animation-range: entry 0% entry 55%;
+            }
+
+            .testi-carousel-reveal {
+              animation: section-in linear both;
+              animation-timeline: view();
+              animation-range: entry 0% entry 50%;
+            }
+
+            .testi-stats-reveal {
+              animation: section-in linear both;
+              animation-timeline: view();
+              animation-range: entry 0% entry 55%;
+            }
+            /* Stagger the stat items inside the <dl> */
+            .testi-stats-reveal > *:nth-child(2) { animation-delay: 0ms; } /* dl has no per-child timing; we stagger with ranges instead */
+            .testi-stats-reveal > *:nth-child(2) { animation-range: entry 4% entry 59%; }
+
+            .testi-others-reveal {
+              animation: section-in linear both;
+              animation-timeline: view();
+              animation-range: entry 0% entry 45%;
+            }
+            /* Stagger the "other testimonial" cards */
+            .testi-others-reveal > *:nth-child(2) {
+              animation-range: entry 5% entry 50%;
+            }
+            .testi-others-reveal > *:nth-child(3) {
+              animation-range: entry 10% entry 55%;
+            }
+          }
         }
       `}</style>
 
@@ -123,7 +166,7 @@ export default function TestimonialSection({
 
       <div className="mx-auto max-w-5xl">
         {/* Header */}
-        <div className="mx-auto mb-12 max-w-2xl text-center md:mb-16">
+        <div className="testi-header-reveal mx-auto mb-12 max-w-2xl text-center md:mb-16">
           <p className="inline-flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-emerald-800 sm:text-xs">
             <span aria-hidden="true" className="h-px w-8 bg-emerald-800/60" />
             {eyebrow}
@@ -142,130 +185,132 @@ export default function TestimonialSection({
         </div>
 
         {/* Main carousel */}
-        <div
-          role="group"
-          aria-roledescription="carousel"
-          aria-label="Testimonials"
-          tabIndex={0}
-          onKeyDown={onKeyDown}
-          onMouseEnter={() => setHovering(true)}
-          onMouseLeave={() => setHovering(false)}
-          onFocus={() => setHovering(true)}
-          onBlur={() => setHovering(false)}
-          className="relative rounded-[2rem] border border-stone-900/[0.07] bg-white p-6 shadow-[0_30px_80px_-40px_rgba(60,70,50,0.35)] outline-none focus-visible:ring-2 focus-visible:ring-emerald-800 sm:p-10 md:p-14"
-        >
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute left-6 top-2 font-serif text-8xl leading-none text-emerald-800/15 sm:left-10 sm:text-9xl"
+        <div className="testi-carousel-reveal">
+          <div
+            role="group"
+            aria-roledescription="carousel"
+            aria-label="Testimonials"
+            tabIndex={0}
+            onKeyDown={onKeyDown}
+            onMouseEnter={() => setHovering(true)}
+            onMouseLeave={() => setHovering(false)}
+            onFocus={() => setHovering(true)}
+            onBlur={() => setHovering(false)}
+            className="relative rounded-[2rem] border border-stone-900/[0.07] bg-white p-6 shadow-[0_30px_80px_-40px_rgba(60,70,50,0.35)] outline-none focus-visible:ring-2 focus-visible:ring-emerald-800 sm:p-10 md:p-14"
           >
-            "
-          </span>
-
-          <div className="relative flex items-center justify-between">
-            <Stars count={active.rating} />
             <span
               aria-hidden="true"
-              className="font-serif text-sm tabular-nums tracking-widest text-stone-400"
+              className="pointer-events-none absolute left-6 top-2 font-serif text-8xl leading-none text-emerald-800/15 sm:left-10 sm:text-9xl"
             >
-              {String(activeIndex + 1).padStart(2, "0")} /{" "}
-              {String(total).padStart(2, "0")}
+              "
             </span>
-          </div>
 
-          <div
-            // aria-live "polite" only when the user changes the slide, not during autoplay
-            aria-live={autoplay ? "off" : "polite"}
-            aria-atomic="true"
-            role="group"
-            aria-roledescription="slide"
-            aria-label={`${activeIndex + 1} of ${total}`}
-            key={active.id}
-            className="testi-in"
-          >
-            <figure>
-              <blockquote className="mt-7 font-serif text-xl italic leading-relaxed text-stone-800 sm:text-2xl md:text-[1.75rem] md:leading-[1.5]">
-                {active.quote}
-              </blockquote>
-
-              <figcaption className="mt-9 flex items-center gap-4">
-                <img
-                  src={active.avatar}
-                  alt=""
-                  width={64}
-                  height={64}
-                  loading="lazy"
-                  decoding="async"
-                  className="h-14 w-14 rounded-full object-cover ring-2 ring-white shadow-md sm:h-16 sm:w-16"
-                />
-                <div className="min-w-0 leading-tight">
-                  <p className="truncate font-semibold text-stone-900">
-                    {active.name}
-                  </p>
-                  <p className="mt-1 truncate text-sm text-stone-500">
-                    {[active.role, active.location].filter(Boolean).join(" · ")}
-                  </p>
-                  {active.since && (
-                    <p className="mt-1 text-xs font-medium text-emerald-800">
-                      {active.since}
-                    </p>
-                  )}
-                </div>
-              </figcaption>
-            </figure>
-          </div>
-
-          {/* Controls */}
-          <div className="relative mt-8 flex items-center justify-between border-t border-stone-900/[0.07] pt-6">
-            <div
-              className="flex items-center gap-1"
-              role="group"
-              aria-label="Choose testimonial"
-            >
-              {testimonials.map((t, i) => (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => goTo(i)}
-                  aria-label={`Show testimonial ${i + 1}`}
-                  aria-current={i === activeIndex}
-                  // 24px touch target, visual dot stays small
-                  className="group flex h-6 items-center px-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
-                >
-                  <span
-                    className={`block h-2 rounded-full transition-all duration-300 ${
-                      i === activeIndex
-                        ? "w-8 bg-emerald-800"
-                        : "w-2 bg-stone-300 group-hover:bg-stone-400"
-                    }`}
-                  />
-                </button>
-              ))}
+            <div className="relative flex items-center justify-between">
+              <Stars count={active.rating} />
+              <span
+                aria-hidden="true"
+                className="font-serif text-sm tabular-nums tracking-widest text-stone-400"
+              >
+                {String(activeIndex + 1).padStart(2, "0")} /{" "}
+                {String(total).padStart(2, "0")}
+              </span>
             </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => goTo(activeIndex - 1)}
-                aria-label="Previous testimonial"
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-stone-900/15 text-stone-600 transition duration-300 hover:border-emerald-800/40 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+            <div
+              aria-live={autoplay ? "off" : "polite"}
+              aria-atomic="true"
+              role="group"
+              aria-roledescription="slide"
+              aria-label={`${activeIndex + 1} of ${total}`}
+              key={active.id}
+              className="testi-in"
+            >
+              <figure>
+                <blockquote className="mt-7 font-serif text-xl italic leading-relaxed text-stone-800 sm:text-2xl md:text-[1.75rem] md:leading-[1.5]">
+                  {active.quote}
+                </blockquote>
+
+                <figcaption className="mt-9 flex items-center gap-4">
+                  <img
+                    src={active.avatar}
+                    alt=""
+                    width={64}
+                    height={64}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-14 w-14 rounded-full object-cover ring-2 ring-white shadow-md sm:h-16 sm:w-16"
+                  />
+                  <div className="min-w-0 leading-tight">
+                    <p className="truncate font-semibold text-stone-900">
+                      {active.name}
+                    </p>
+                    <p className="mt-1 truncate text-sm text-stone-500">
+                      {[active.role, active.location]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                    {active.since && (
+                      <p className="mt-1 text-xs font-medium text-emerald-800">
+                        {active.since}
+                      </p>
+                    )}
+                  </div>
+                </figcaption>
+              </figure>
+            </div>
+
+            {/* Controls */}
+            <div className="relative mt-8 flex items-center justify-between border-t border-stone-900/[0.07] pt-6">
+              <div
+                className="flex items-center gap-1"
+                role="group"
+                aria-label="Choose testimonial"
               >
-                <ChevronIcon dir="left" className="h-5 w-5" />
-              </button>
-              <button
-                type="button"
-                onClick={() => goTo(activeIndex + 1)}
-                aria-label="Next testimonial"
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-800 text-white shadow-md shadow-emerald-900/15 transition duration-300 hover:-translate-y-0.5 hover:bg-emerald-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
-              >
-                <ChevronIcon dir="right" className="h-5 w-5" />
-              </button>
+                {testimonials.map((t, i) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => goTo(i)}
+                    aria-label={`Show testimonial ${i + 1}`}
+                    aria-current={i === activeIndex}
+                    className="group flex h-6 items-center px-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+                  >
+                    <span
+                      className={`block h-2 rounded-full transition-all duration-300 ${
+                        i === activeIndex
+                          ? "w-8 bg-emerald-800"
+                          : "w-2 bg-stone-300 group-hover:bg-stone-400"
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => goTo(activeIndex - 1)}
+                  aria-label="Previous testimonial"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-stone-900/15 text-stone-600 transition duration-300 hover:border-emerald-800/40 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+                >
+                  <ChevronIcon dir="left" className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => goTo(activeIndex + 1)}
+                  aria-label="Next testimonial"
+                  className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-800 text-white shadow-md shadow-emerald-900/15 transition duration-300 hover:-translate-y-0.5 hover:bg-emerald-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+                >
+                  <ChevronIcon dir="right" className="h-5 w-5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Stats: a dl with thin dividers, not cards */}
+        {/* Stats */}
         {stats?.length > 0 && (
-          <dl className="mt-14 grid grid-cols-2 gap-y-8 md:mt-20 md:grid-cols-4 md:divide-x md:divide-stone-900/10">
+          <dl className="testi-stats-reveal mt-14 grid grid-cols-2 gap-y-8 md:mt-20 md:grid-cols-4 md:divide-x md:divide-stone-900/10">
             {stats.map((s) => (
               <div key={s.label} className="px-4 text-center">
                 <dd className="font-serif text-4xl text-stone-900 sm:text-5xl">
@@ -284,7 +329,7 @@ export default function TestimonialSection({
 
         {/* Other testimonials */}
         {others.length > 0 && (
-          <ul className="mt-14 grid gap-4 sm:grid-cols-2 md:mt-20 md:grid-cols-3">
+          <ul className="testi-others-reveal mt-14 grid gap-4 sm:grid-cols-2 md:mt-20 md:grid-cols-3">
             {others.map((t) => (
               <li key={t.id} className="flex">
                 <button

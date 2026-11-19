@@ -62,18 +62,67 @@ export default function InstructorSection(props) {
       <style>{`
         @keyframes instructor-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         @keyframes instructor-spin { to { transform: rotate(360deg); } }
+
         @media (prefers-reduced-motion: no-preference) {
           .instructor-float { animation: instructor-float 7s ease-in-out infinite; }
           .instructor-spin { animation: instructor-spin 40s linear infinite; }
+
           @supports (animation-timeline: view()) {
-            .instructor-reveal {
-              animation: instructor-in linear both;
-              animation-timeline: view();
-              animation-range: entry 0% entry 50%;
-            }
+            /* Shared reveal keyframes */
             @keyframes instructor-in {
               from { opacity: 0; transform: translateY(28px); }
-              to { opacity: 1; transform: none; }
+              to   { opacity: 1; transform: none; }
+            }
+
+            /* Photo column — appears first */
+            .instructor-photo-reveal {
+              animation: instructor-in linear both;
+              animation-timeline: view();
+              animation-range: entry 0% entry 45%;
+            }
+
+            /* "Years" badge — follows the photo slightly */
+            .instructor-badge-reveal {
+              animation: instructor-in linear both;
+              animation-timeline: view();
+              animation-range: entry 8% entry 52%;
+            }
+
+            /* Content column — starts a touch later than the photo */
+            .instructor-content-reveal {
+              animation: instructor-in linear both;
+              animation-timeline: view();
+              animation-range: entry 6% entry 52%;
+            }
+
+            /* Individual content elements — stagger down the column.
+               We use nth-of-type inside the content block so each line
+               reveals as the user scrolls through it. */
+            .instructor-line-reveal {
+              animation: instructor-in linear both;
+              animation-timeline: view();
+              animation-range: entry 0% entry 45%;
+            }
+            .instructor-content-reveal .instructor-line-reveal:nth-child(1) {
+              animation-range: entry 8%  entry 53%;
+            }
+            .instructor-content-reveal .instructor-line-reveal:nth-child(2) {
+              animation-range: entry 12% entry 57%;
+            }
+            .instructor-content-reveal .instructor-line-reveal:nth-child(3) {
+              animation-range: entry 16% entry 61%;
+            }
+            .instructor-content-reveal .instructor-line-reveal:nth-child(4) {
+              animation-range: entry 20% entry 65%;
+            }
+            .instructor-content-reveal .instructor-line-reveal:nth-child(5) {
+              animation-range: entry 24% entry 69%;
+            }
+            .instructor-content-reveal .instructor-line-reveal:nth-child(6) {
+              animation-range: entry 28% entry 73%;
+            }
+            .instructor-content-reveal .instructor-line-reveal:nth-child(7) {
+              animation-range: entry 32% entry 77%;
             }
           }
         }
@@ -89,8 +138,7 @@ export default function InstructorSection(props) {
 
       <div className="mx-auto grid max-w-6xl items-center gap-14 md:grid-cols-[0.9fr_1.1fr] md:gap-20">
         {/* ===== Image (on top on mobile, on the left on desktop) ===== */}
-        <div className="instructor-reveal relative mx-auto w-full max-w-sm md:max-w-none">
-          {/* Offset outline frame, adds depth without blur */}
+        <div className="instructor-photo-reveal relative mx-auto w-full max-w-sm md:max-w-none">
           <div
             aria-hidden="true"
             className="absolute inset-0 translate-x-4 translate-y-4 rounded-[2rem] border border-emerald-800/25 md:translate-x-6 md:translate-y-6"
@@ -111,8 +159,8 @@ export default function InstructorSection(props) {
             />
           </div>
 
-          {/* Years-of-experience badge: this is a fact, not a quote, so no quotation marks */}
-          <div className="absolute -bottom-6 -right-2 flex h-28 w-28 items-center justify-center sm:-right-6 sm:h-32 sm:w-32">
+          {/* Years-of-experience badge — own reveal, follows photo */}
+          <div className="instructor-badge-reveal absolute -bottom-6 -right-2 flex h-28 w-28 items-center justify-center sm:-right-6 sm:h-32 sm:w-32">
             <svg
               aria-hidden="true"
               viewBox="0 0 100 100"
@@ -152,30 +200,32 @@ export default function InstructorSection(props) {
         </div>
 
         {/* ===== Content ===== */}
-        <div className="instructor-reveal text-center md:text-left">
-          <p className="inline-flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-emerald-800 sm:text-xs">
+        <div className="instructor-content-reveal text-center md:text-left">
+          <p className="instructor-line-reveal inline-flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-emerald-800 sm:text-xs">
             <span aria-hidden="true" className="h-px w-8 bg-emerald-800/60" />
             {eyebrow}
           </p>
 
           <h2
             id="instructor-heading"
-            className="mt-5 font-serif text-4xl leading-[1.05] tracking-tight text-stone-900 sm:text-5xl"
+            className="instructor-line-reveal mt-5 font-serif text-4xl leading-[1.05] tracking-tight text-stone-900 sm:text-5xl"
           >
             {title}{" "}
             <span className="italic text-emerald-800">{titleAccent}</span>
           </h2>
 
           {name && (
-            <p className="mt-4 font-serif text-xl text-stone-700">{name}</p>
+            <p className="instructor-line-reveal mt-4 font-serif text-xl text-stone-700">
+              {name}
+            </p>
           )}
 
-          <p className="mx-auto mt-6 max-w-md text-base leading-relaxed text-stone-600 md:mx-0 md:text-lg">
+          <p className="instructor-line-reveal mx-auto mt-6 max-w-md text-base leading-relaxed text-stone-600 md:mx-0 md:text-lg">
             {bio}
           </p>
 
           {credentials.length > 0 && (
-            <ul className="mx-auto mt-6 flex max-w-md flex-wrap justify-center gap-2 md:mx-0 md:justify-start">
+            <ul className="instructor-line-reveal mx-auto mt-6 flex max-w-md flex-wrap justify-center gap-2 md:mx-0 md:justify-start">
               {credentials.map((c) => (
                 <li
                   key={c}
@@ -187,8 +237,8 @@ export default function InstructorSection(props) {
             </ul>
           )}
 
-          {/* Pull quote: an actual blockquote */}
-          <figure className="relative mx-auto mt-10 max-w-md md:mx-0">
+          {/* Pull quote */}
+          <figure className="instructor-line-reveal relative mx-auto mt-10 max-w-md md:mx-0">
             <span
               aria-hidden="true"
               className="absolute -top-5 left-0 font-serif text-6xl leading-none text-emerald-800/25"
@@ -201,7 +251,7 @@ export default function InstructorSection(props) {
           </figure>
 
           {bioHref && (
-            <div className="mt-9">
+            <div className="instructor-line-reveal mt-9">
               <a
                 href={bioHref}
                 className="group inline-flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.18em] text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-800"

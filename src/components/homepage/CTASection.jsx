@@ -51,14 +51,56 @@ export default function CTASection(props) {
       className="relative bg-[#f6f2ea] px-5 py-20 sm:px-8 md:py-28"
     >
       <style>{`
-        @keyframes cta-breathe { 0%,100% { transform: translate(-50%,-50%) scale(1); } 50% { transform: translate(-50%,-50%) scale(1.05); } }
+        @keyframes cta-breathe {
+          0%,100% { transform: translate(-50%,-50%) scale(1); }
+          50%     { transform: translate(-50%,-50%) scale(1.05); }
+        }
+
         @media (prefers-reduced-motion: no-preference) {
+          /* Ambient: background rings breathe */
           .cta-ring { animation: cta-breathe 10s ease-in-out infinite; }
+
+          @supports (animation-timeline: view()) {
+            /* Scroll-reveal keyframes */
+            @keyframes cta-in {
+              from { opacity: 0; transform: translateY(24px); }
+              to   { opacity: 1; transform: none; }
+            }
+
+            /* The whole dark card fades up first */
+            .cta-card-reveal {
+              animation: cta-in linear both;
+              animation-timeline: view();
+              animation-range: entry 0% entry 55%;
+            }
+
+            /* Individual lines inside the card, staggered top → bottom */
+            .cta-line-reveal {
+              animation: cta-in linear both;
+              animation-timeline: view();
+              animation-range: entry 0% entry 45%;
+            }
+            .cta-card-reveal .cta-line-reveal:nth-child(1) {
+              animation-range: entry 10% entry 55%;
+            }
+            .cta-card-reveal .cta-line-reveal:nth-child(2) {
+              animation-range: entry 14% entry 59%;
+            }
+            .cta-card-reveal .cta-line-reveal:nth-child(3) {
+              animation-range: entry 18% entry 63%;
+            }
+            .cta-card-reveal .cta-line-reveal:nth-child(4) {
+              animation-range: entry 22% entry 67%;
+            }
+            .cta-card-reveal .cta-line-reveal:nth-child(5) {
+              animation-range: entry 26% entry 71%;
+            }
+          }
         }
       `}</style>
 
-      <div className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] bg-emerald-950 px-6 py-16 text-center shadow-[0_40px_100px_-40px_rgba(6,40,30,0.7)] sm:rounded-[2.5rem] sm:px-12 sm:py-20 md:py-24">
-        {/* Decoration: concentric rings + warm glow, matching the circles in the hero */}
+      <div className="cta-card-reveal relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] bg-emerald-950 px-6 py-16 text-center shadow-[0_40px_100px_-40px_rgba(6,40,30,0.7)] sm:rounded-[2.5rem] sm:px-12 sm:py-20 md:py-24">
+        {/* Decoration: concentric rings + warm glow */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0"
@@ -71,7 +113,7 @@ export default function CTASection(props) {
         </div>
 
         <div className="relative mx-auto max-w-2xl">
-          <p className="inline-flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-emerald-200 sm:text-xs">
+          <p className="cta-line-reveal inline-flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-emerald-200 sm:text-xs">
             <span aria-hidden="true" className="h-px w-8 bg-emerald-200/50" />
             {eyebrow}
             <span aria-hidden="true" className="h-px w-8 bg-emerald-200/50" />
@@ -79,17 +121,17 @@ export default function CTASection(props) {
 
           <h2
             id="cta-heading"
-            className="mt-6 font-serif text-4xl leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl"
+            className="cta-line-reveal mt-6 font-serif text-4xl leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl"
           >
             {title}{" "}
             <span className="block italic text-emerald-200">{titleAccent}</span>
           </h2>
 
-          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-emerald-50/80 md:text-lg">
+          <p className="cta-line-reveal mx-auto mt-6 max-w-xl text-base leading-relaxed text-emerald-50/80 md:text-lg">
             {description}
           </p>
 
-          <div className="mx-auto mt-10 flex max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center">
+          <div className="cta-line-reveal mx-auto mt-10 flex max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center">
             <a
               href={primaryCta.href}
               className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-[#f6f2ea] px-8 py-4 text-sm font-semibold text-emerald-950 shadow-lg shadow-black/20 transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white md:text-base"
@@ -106,7 +148,7 @@ export default function CTASection(props) {
           </div>
 
           {note && (
-            <p className="mt-8 inline-flex items-center gap-2 text-sm text-emerald-100/70">
+            <p className="cta-line-reveal mt-8 inline-flex items-center gap-2 text-sm text-emerald-100/70">
               <span
                 aria-hidden="true"
                 className="h-1.5 w-1.5 rounded-full bg-amber-300"

@@ -5,7 +5,6 @@
 import { classes, formatPrice } from "./yogaData";
 
 // Classes are made static so Tailwind doesn't purge them at build time
-// (the old version used dynamic `group-hover:${...}`, which never got generated).
 const ACCENTS = {
   amber: {
     dot: "bg-amber-400",
@@ -128,6 +127,63 @@ export default function ScheduleSection({
       aria-labelledby="schedule-heading"
       className="relative isolate overflow-hidden bg-[#f6f2ea] px-5 py-20 sm:px-8 md:py-32"
     >
+      {/* Scroll-reveal via CSS Scroll-Driven Animations.
+          Progressive enhancement: if animation-timeline isn't supported,
+          elements render normally (no opacity issues). */}
+      <style>{`
+        @media (prefers-reduced-motion: no-preference) {
+          @supports (animation-timeline: view()) {
+
+            .schedule-header-reveal {
+              animation: schedule-in linear both;
+              animation-timeline: view();
+              animation-range: entry 0% entry 55%;
+            }
+
+            .schedule-row-reveal {
+              animation: schedule-in linear both;
+              animation-timeline: view();
+              animation-range: entry 0% entry 40%;
+            }
+            /* Slight stagger so rows don't all start at the exact same point.
+               Because rows are stacked vertically, the effect reads as a
+               gentle wave down the list as you scroll. */
+            .schedule-row-reveal:nth-child(2) {
+              animation-range: entry 4% entry 44%;
+            }
+            .schedule-row-reveal:nth-child(3) {
+              animation-range: entry 8% entry 48%;
+            }
+            .schedule-row-reveal:nth-child(4) {
+              animation-range: entry 12% entry 52%;
+            }
+            .schedule-row-reveal:nth-child(5) {
+              animation-range: entry 16% entry 56%;
+            }
+            .schedule-row-reveal:nth-child(6) {
+              animation-range: entry 20% entry 60%;
+            }
+            .schedule-row-reveal:nth-child(7) {
+              animation-range: entry 24% entry 64%;
+            }
+            .schedule-row-reveal:nth-child(8) {
+              animation-range: entry 28% entry 68%;
+            }
+
+            .schedule-footer-reveal {
+              animation: schedule-in linear both;
+              animation-timeline: view();
+              animation-range: entry 0% entry 60%;
+            }
+
+            @keyframes schedule-in {
+              from { opacity: 0; transform: translateY(24px); }
+              to   { opacity: 1; transform: none; }
+            }
+          }
+        }
+      `}</style>
+
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10"
@@ -138,7 +194,7 @@ export default function ScheduleSection({
 
       <div className="mx-auto max-w-6xl">
         {/* Header */}
-        <div className="mb-10 flex flex-col gap-6 md:mb-16 md:flex-row md:items-end md:justify-between">
+        <div className="schedule-header-reveal mb-10 flex flex-col gap-6 md:mb-16 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="inline-flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-emerald-800 sm:text-xs">
               <span aria-hidden="true" className="h-px w-8 bg-emerald-800/60" />
@@ -176,18 +232,16 @@ export default function ScheduleSection({
             const accent = ACCENTS[c.accent] ?? ACCENTS.emerald;
 
             return (
-              <li key={c.id}>
+              <li key={c.id} className="schedule-row-reveal">
                 <article
                   className={`group relative overflow-hidden rounded-[1.5rem] border border-stone-900/[0.07] shadow-sm shadow-stone-900/[0.03] transition duration-500 hover:-translate-y-1 hover:border-emerald-800/20 hover:shadow-2xl hover:shadow-emerald-900/10 ${
                     isFull ? "bg-white/60" : "bg-white"
                   }`}
                 >
-                  {/* Hover tint */}
                   <div
                     aria-hidden="true"
                     className={`pointer-events-none absolute inset-0 bg-gradient-to-r ${accent.tint} to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100`}
                   />
-                  {/* Left accent bar */}
                   <div
                     aria-hidden="true"
                     className={`absolute inset-y-5 left-0 w-1 rounded-r-full transition-all duration-500 group-hover:w-1.5 ${accent.bar}`}
@@ -240,7 +294,7 @@ export default function ScheduleSection({
                       </div>
                     </div>
 
-                    {/* Price + CTA (single block, no longer duplicated mobile/desktop) */}
+                    {/* Price + CTA */}
                     <div className="flex items-center justify-between gap-4 border-t border-stone-900/[0.07] pt-4 md:flex-col md:items-end md:justify-center md:gap-3 md:border-l md:border-t-0 md:pl-8 md:pt-0">
                       <div className="md:text-right">
                         <p className="text-[11px] uppercase tracking-widest text-stone-400">
@@ -259,7 +313,7 @@ export default function ScheduleSection({
           })}
         </ul>
 
-        <p className="mt-10 text-center text-sm text-stone-500">
+        <p className="schedule-footer-reveal mt-10 text-center text-sm text-stone-500">
           No time that works for you?{" "}
           <a
             href="/contact"

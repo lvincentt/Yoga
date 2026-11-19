@@ -15,18 +15,46 @@ export default function BenefitsSection({
       aria-labelledby="benefits-heading"
       className="relative isolate overflow-hidden bg-[#fbf9f4] px-5 py-20 sm:px-8 md:py-32"
     >
-      {/* Scroll-reveal: progressive enhancement, safe for browsers that don't support it yet */}
+      {/* Scroll-reveal via CSS Scroll-Driven Animations.
+          Progressive enhancement: if animation-timeline isn't supported,
+          elements just render normally (no opacity issues). */}
       <style>{`
         @media (prefers-reduced-motion: no-preference) {
           @supports (animation-timeline: view()) {
+
+            /* Header reveal */
+            .benefit-header-reveal {
+              animation: benefit-in linear both;
+              animation-timeline: view();
+              animation-range: entry 0% entry 55%;
+            }
+
+            /* Card reveal — stagger via nth-child animation-range shifts.
+               Each later card starts slightly later as it enters the viewport. */
             .benefit-reveal {
               animation: benefit-in linear both;
               animation-timeline: view();
               animation-range: entry 0% entry 45%;
             }
+            .benefit-reveal:nth-child(2) {
+              animation-range: entry 5% entry 50%;
+            }
+            .benefit-reveal:nth-child(3) {
+              animation-range: entry 10% entry 55%;
+            }
+            .benefit-reveal:nth-child(4) {
+              animation-range: entry 15% entry 60%;
+            }
+            .benefit-reveal:nth-child(5) {
+              animation-range: entry 20% entry 65%;
+            }
+            .benefit-reveal:nth-child(6) {
+              animation-range: entry 25% entry 70%;
+            }
+
             @keyframes benefit-in {
               from { opacity: 0; transform: translateY(28px); }
-              to { opacity: 1; transform: none; }
+              to   { opacity: 1; transform: none; }
             }
           }
         }
@@ -43,7 +71,7 @@ export default function BenefitsSection({
 
       <div className="mx-auto max-w-6xl">
         {/* Header */}
-        <div className="mx-auto mb-12 max-w-2xl text-center sm:mb-16 md:mb-20">
+        <div className="benefit-header-reveal mx-auto mb-12 max-w-2xl text-center sm:mb-16 md:mb-20">
           <p className="inline-flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-emerald-800 sm:text-xs">
             <span aria-hidden="true" className="h-px w-8 bg-emerald-800/60" />
             {eyebrow}
@@ -66,7 +94,6 @@ export default function BenefitsSection({
           {items.map((item, i) => (
             <li key={item.title} className="benefit-reveal group relative flex">
               <article className="relative flex w-full flex-col overflow-hidden rounded-[1.75rem] border border-stone-900/[0.07] bg-white p-6 shadow-sm shadow-stone-900/[0.03] transition duration-500 hover:-translate-y-1.5 hover:border-emerald-800/20 hover:shadow-2xl hover:shadow-emerald-900/10 sm:p-7 md:p-8">
-                {/* Hover tint (uses the old gradient if present) */}
                 <div
                   aria-hidden="true"
                   className={`absolute inset-0 -z-0 bg-gradient-to-br opacity-0 transition-opacity duration-500 group-hover:opacity-100 ${
@@ -76,7 +103,6 @@ export default function BenefitsSection({
 
                 <div className="relative flex h-full flex-col">
                   <div className="flex items-start justify-between">
-                    {/* Icon in arch shape, matching the hero */}
                     <span
                       aria-hidden="true"
                       className="flex h-14 w-12 items-center justify-center rounded-t-full rounded-b-xl bg-[#f1ece0] text-2xl ring-1 ring-stone-900/5 transition duration-500 group-hover:scale-105 group-hover:bg-white"
